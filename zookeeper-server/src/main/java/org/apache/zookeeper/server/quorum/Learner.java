@@ -25,9 +25,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -112,19 +114,21 @@ public class Learner {
     protected static final Logger LOG = LoggerFactory.getLogger(Learner.class);
 
     /**
-     * Time to wait after connection attempt with the Leader or LearnerMaster before this
+     * Time to wait after connection attempt with the Leader or LearnerMaster before
+     * this
      * Learner tries to connect again.
      */
-    private static final int leaderConnectDelayDuringRetryMs = Integer.getInteger("zookeeper.leaderConnectDelayDuringRetryMs", 100);
+    private static final int leaderConnectDelayDuringRetryMs = Integer
+            .getInteger("zookeeper.leaderConnectDelayDuringRetryMs", 100);
 
     private static final boolean nodelay = System.getProperty("follower.nodelay", "true").equals("true");
 
     public static final String LEARNER_ASYNC_SENDING = "zookeeper.learner.asyncSending";
-    private static boolean asyncSending =
-        Boolean.parseBoolean(ConfigUtils.getPropertyBackwardCompatibleWay(LEARNER_ASYNC_SENDING));
+    private static boolean asyncSending = Boolean
+            .parseBoolean(ConfigUtils.getPropertyBackwardCompatibleWay(LEARNER_ASYNC_SENDING));
     public static final String LEARNER_CLOSE_SOCKET_ASYNC = "zookeeper.learner.closeSocketAsync";
     public static final boolean closeSocketAsync = Boolean
-        .parseBoolean(ConfigUtils.getPropertyBackwardCompatibleWay(LEARNER_CLOSE_SOCKET_ASYNC));
+            .parseBoolean(ConfigUtils.getPropertyBackwardCompatibleWay(LEARNER_CLOSE_SOCKET_ASYNC));
 
     static {
         LOG.info("leaderConnectDelayDuringRetryMs: {}", leaderConnectDelayDuringRetryMs);
@@ -145,16 +149,18 @@ public class Learner {
         LOG.info("{} = {}", LEARNER_ASYNC_SENDING, asyncSending);
 
     }
+
     protected static boolean getAsyncSending() {
         return asyncSending;
     }
+
     /**
      * validate a session for a client
      *
      * @param clientId
-     *                the client to be revalidated
+     *                 the client to be revalidated
      * @param timeout
-     *                the timeout for which the session is valid
+     *                 the timeout for which the session is valid
      * @throws IOException
      */
     void validateSession(ServerCnxn cnxn, long clientId, int timeout) throws IOException {
@@ -168,9 +174,9 @@ public class Learner {
         pendingRevalidations.put(clientId, cnxn);
         if (LOG.isTraceEnabled()) {
             ZooTrace.logTraceMessage(
-                LOG,
-                ZooTrace.SESSION_TRACE_MASK,
-                "To validate session 0x" + Long.toHexString(clientId));
+                    LOG,
+                    ZooTrace.SESSION_TRACE_MASK,
+                    "To validate session 0x" + Long.toHexString(clientId));
         }
         writePacket(qp, true);
     }
@@ -178,14 +184,18 @@ public class Learner {
     /**
      * write a packet to the leader.
      *
-     * This method is called by multiple threads. We need to make sure that only one thread is writing to leaderOs at a time.
-     * When packets are sent synchronously, writing is done within a synchronization block.
-     * When packets are sent asynchronously, sender.queuePacket() is called, which writes to a BlockingQueue, which is thread-safe.
-     * Reading from this BlockingQueue and writing to leaderOs is the learner sender thread only.
+     * This method is called by multiple threads. We need to make sure that only one
+     * thread is writing to leaderOs at a time.
+     * When packets are sent synchronously, writing is done within a synchronization
+     * block.
+     * When packets are sent asynchronously, sender.queuePacket() is called, which
+     * writes to a BlockingQueue, which is thread-safe.
+     * Reading from this BlockingQueue and writing to leaderOs is the learner sender
+     * thread only.
      * So we have only one thread writing to leaderOs at a time in either case.
      *
      * @param pp
-     *                the proposal packet to be sent to the leader
+     *           the proposal packet to be sent to the leader
      * @throws IOException
      */
     void writePacket(QuorumPacket pp, boolean flush) throws IOException {
@@ -216,11 +226,18 @@ public class Learner {
         sender.start();
     }
 
+    static boolean ifFaultInjected(String faultID) {
+        boolean result = new File("/users/dimas/zookeeper/fault." + faultID).isFile();
+        if (result)
+            System.out.println("DIMAS: fault " + faultID + "triggered!");
+        return result;
+    }
+
     /**
      * read a packet from the leader
      *
      * @param pp
-     *                the packet to be instantiated
+     *           the packet to be instantiated
      * @throws IOException
      */
     void readPacket(QuorumPacket pp) throws IOException {
@@ -229,11 +246,16 @@ public class Learner {
             messageTracker.trackReceived(pp.getType());
         }
         if (LOG.isTraceEnabled()) {
-            final long traceMask =
-                (pp.getType() == Leader.PING) ? ZooTrace.SERVER_PING_TRACE_MASK
+            final long traceMask = (pp.getType() == Leader.PING) ? ZooTrace.SERVER_PING_TRACE_MASK
                     : ZooTrace.SERVER_PACKET_TRACE_MASK;
 
             ZooTrace.logQuorumPacket(LOG, traceMask, 'i', pp);
+        }
+        if (ifFaultInjected("ZK-4773") && pp.getType() == Leader.PROPOSAL) {
+            String type = LearnerHandler.packetToString(pp);
+            throw new SocketTimeoutException(
+                    "Socket timeout while reading the packet for operation "
+                            + type);
         }
     }
 
@@ -303,18 +325,22 @@ public class Learner {
 
     /**
      * Establish a connection with the LearnerMaster found by findLearnerMaster.
-     * Followers only connect to Leaders, Observers can connect to any active LearnerMaster.
+     * Followers only connect to Leaders, Observers can connect to any active
+     * LearnerMaster.
      * Retries until either initLimit time has elapsed or 5 tries have happened.
+     * 
      * @param multiAddr - the address of the Peer to connect to.
      * @throws IOException - if the socket connection fails on the 5th attempt
-     * if there is an authentication failure while connecting to leader
+     *                     if there is an authentication failure while connecting to
+     *                     leader
      */
     protected void connectToLeader(MultipleAddresses multiAddr, String hostname) throws IOException {
 
         this.leaderAddr = multiAddr;
         Set<InetSocketAddress> addresses;
         if (self.isMultiAddressReachabilityCheckEnabled()) {
-            // even if none of the addresses are reachable, we want to try to establish connection
+            // even if none of the addresses are reachable, we want to try to establish
+            // connection
             // see ZOOKEEPER-3758
             addresses = multiAddr.getAllReachableAddressesOrAll();
         } else {
@@ -426,27 +452,27 @@ public class Learner {
 
                     if (remainingTimeout <= leaderConnectDelayDuringRetryMs) {
                         LOG.error(
-                          "Unexpected exception, connectToLeader exceeded. tries={}, remaining init limit={}, connecting to {}",
-                          tries,
-                          remainingTimeout,
-                          address,
-                          e);
+                                "Unexpected exception, connectToLeader exceeded. tries={}, remaining init limit={}, connecting to {}",
+                                tries,
+                                remainingTimeout,
+                                address,
+                                e);
                         throw e;
                     } else if (tries >= 4) {
                         LOG.error(
-                          "Unexpected exception, retries exceeded. tries={}, remaining init limit={}, connecting to {}",
-                          tries,
-                          remainingTimeout,
-                          address,
-                          e);
+                                "Unexpected exception, retries exceeded. tries={}, remaining init limit={}, connecting to {}",
+                                tries,
+                                remainingTimeout,
+                                address,
+                                e);
                         throw e;
                     } else {
                         LOG.warn(
-                          "Unexpected exception, tries={}, remaining init limit={}, connecting to {}",
-                          tries,
-                          remainingTimeout,
-                          address,
-                          e);
+                                "Unexpected exception, tries={}, remaining init limit={}, connecting to {}",
+                                tries,
+                                remainingTimeout,
+                                address,
+                                e);
                         sock = createSocket();
                     }
                 }
@@ -459,7 +485,8 @@ public class Learner {
 
     /**
      * Creating a simple or and SSL socket.
-     * This can be overridden in tests to fake already connected sockets for connectToLeader.
+     * This can be overridden in tests to fake already connected sockets for
+     * connectToLeader.
      */
     protected Socket createSocket() throws X509Exception, IOException {
         Socket sock;
@@ -475,6 +502,7 @@ public class Learner {
     /**
      * Once connected to the leader or learner master, perform the handshake
      * protocol to establish a following / observing connection.
+     * 
      * @param pktType
      * @return the zxid the Leader sends for synchronization purposes.
      * @throws IOException
@@ -501,7 +529,8 @@ public class Learner {
         readPacket(qp);
         final long newEpoch = ZxidUtils.getEpochFromZxid(qp.getZxid());
         if (qp.getType() == Leader.LEADERINFO) {
-            // we are connected to a 1.0 server so accept the new epoch and read the next packet
+            // we are connected to a 1.0 server so accept the new epoch and read the next
+            // packet
             leaderProtocolVersion = ByteBuffer.wrap(qp.getData()).getInt();
             byte[] epochBytes = new byte[4];
             final ByteBuffer wrappedEpochBytes = ByteBuffer.wrap(epochBytes);
@@ -516,9 +545,9 @@ public class Learner {
                 wrappedEpochBytes.putInt(-1);
             } else {
                 throw new IOException("Leaders epoch, "
-                                      + newEpoch
-                                      + " is less than accepted epoch, "
-                                      + self.getAcceptedEpoch());
+                        + newEpoch
+                        + " is less than accepted epoch, "
+                        + self.getAcceptedEpoch());
             }
             QuorumPacket ackNewEpoch = new QuorumPacket(Leader.ACKEPOCH, lastLoggedZxid, epochBytes, null);
             writePacket(ackNewEpoch, true);
@@ -538,6 +567,7 @@ public class Learner {
     /**
      * Finally, synchronize our history with the Leader (if Follower)
      * or the LearnerMaster (if Observer).
+     * 
      * @param newLeaderZxid
      * @throws IOException
      * @throws InterruptedException
@@ -549,7 +579,8 @@ public class Learner {
 
         QuorumVerifier newLeaderQV = null;
 
-        // In the DIFF case we don't need to do a snapshot because the transactions will sync on top of any existing snapshot
+        // In the DIFF case we don't need to do a snapshot because the transactions will
+        // sync on top of any existing snapshot
         // For SNAP and TRUNC the snapshot is needed to save that history
         boolean snapshotNeeded = true;
         boolean syncSnapshot = false;
@@ -563,7 +594,8 @@ public class Learner {
                 LOG.info("Getting a diff from the leader 0x{}", Long.toHexString(qp.getZxid()));
                 self.setSyncMode(QuorumPeer.SyncMode.DIFF);
                 if (zk.shouldForceWriteInitialSnapshotAfterLeaderElection()) {
-                    LOG.info("Forcing a snapshot write as part of upgrading from an older Zookeeper. This should only happen while upgrading.");
+                    LOG.info(
+                            "Forcing a snapshot write as part of upgrading from an older Zookeeper. This should only happen while upgrading.");
                     snapshotNeeded = true;
                     syncSnapshot = true;
                 } else {
@@ -592,7 +624,7 @@ public class Learner {
                 // immediately persist the latest snapshot when there is txn log gap
                 syncSnapshot = true;
             } else if (qp.getType() == Leader.TRUNC) {
-                //we need to truncate the log to the lastzxid of the leader
+                // we need to truncate the log to the lastzxid of the leader
                 self.setSyncMode(QuorumPeer.SyncMode.TRUNC);
                 LOG.warn("Truncating log to get in sync with the leader 0x{}", Long.toHexString(qp.getZxid()));
                 boolean truncated = zk.getZKDatabase().truncateLog(qp.getZxid());
@@ -612,173 +644,179 @@ public class Learner {
 
             long lastQueued = 0;
 
-            // in Zab V1.0 (ZK 3.4+) we might take a snapshot when we get the NEWLEADER message, but in pre V1.0
-            // we take the snapshot on the UPDATE message, since Zab V1.0 also gets the UPDATE (after the NEWLEADER)
+            // in Zab V1.0 (ZK 3.4+) we might take a snapshot when we get the NEWLEADER
+            // message, but in pre V1.0
+            // we take the snapshot on the UPDATE message, since Zab V1.0 also gets the
+            // UPDATE (after the NEWLEADER)
             // we need to make sure that we don't take the snapshot twice.
             boolean isPreZAB1_0 = true;
-            //If we are not going to take the snapshot be sure the transactions are not applied in memory
+            // If we are not going to take the snapshot be sure the transactions are not
+            // applied in memory
             // but written out to the transaction log
             boolean writeToTxnLog = !snapshotNeeded;
             TxnLogEntry logEntry;
-            // we are now going to start getting transactions to apply followed by an UPTODATE
-            outerLoop:
-            while (self.isRunning()) {
+            // we are now going to start getting transactions to apply followed by an
+            // UPTODATE
+            outerLoop: while (self.isRunning()) {
                 readPacket(qp);
                 switch (qp.getType()) {
-                case Leader.PROPOSAL:
-                    PacketInFlight pif = new PacketInFlight();
-                    logEntry = SerializeUtils.deserializeTxn(qp.getData());
-                    pif.hdr = logEntry.getHeader();
-                    pif.rec = logEntry.getTxn();
-                    pif.digest = logEntry.getDigest();
-                    if (pif.hdr.getZxid() != lastQueued + 1) {
-                        LOG.warn(
-                            "Got zxid 0x{} expected 0x{}",
-                            Long.toHexString(pif.hdr.getZxid()),
-                            Long.toHexString(lastQueued + 1));
-                    }
-                    lastQueued = pif.hdr.getZxid();
-
-                    if (pif.hdr.getType() == OpCode.reconfig) {
-                        SetDataTxn setDataTxn = (SetDataTxn) pif.rec;
-                        QuorumVerifier qv = self.configFromString(new String(setDataTxn.getData(), UTF_8));
-                        self.setLastSeenQuorumVerifier(qv, true);
-                    }
-
-                    packetsNotCommitted.add(pif);
-                    break;
-                case Leader.COMMIT:
-                case Leader.COMMITANDACTIVATE:
-                    pif = packetsNotCommitted.peekFirst();
-                    if (pif.hdr.getZxid() == qp.getZxid() && qp.getType() == Leader.COMMITANDACTIVATE) {
-                        QuorumVerifier qv = self.configFromString(new String(((SetDataTxn) pif.rec).getData(), UTF_8));
-                        boolean majorChange = self.processReconfig(
-                            qv,
-                            ByteBuffer.wrap(qp.getData()).getLong(), qp.getZxid(),
-                            true);
-                        if (majorChange) {
-                            throw new Exception("changes proposed in reconfig");
-                        }
-                    }
-                    if (!writeToTxnLog) {
-                        if (pif.hdr.getZxid() != qp.getZxid()) {
-                            LOG.warn(
-                                "Committing 0x{}, but next proposal is 0x{}",
-                                Long.toHexString(qp.getZxid()),
-                                Long.toHexString(pif.hdr.getZxid()));
-                        } else {
-                            zk.processTxn(pif.hdr, pif.rec);
-                            packetsNotCommitted.remove();
-                        }
-                    } else {
-                        packetsCommitted.add(qp.getZxid());
-                    }
-                    break;
-                case Leader.INFORM:
-                case Leader.INFORMANDACTIVATE:
-                    PacketInFlight packet = new PacketInFlight();
-
-                    if (qp.getType() == Leader.INFORMANDACTIVATE) {
-                        ByteBuffer buffer = ByteBuffer.wrap(qp.getData());
-                        long suggestedLeaderId = buffer.getLong();
-                        byte[] remainingdata = new byte[buffer.remaining()];
-                        buffer.get(remainingdata);
-                        logEntry = SerializeUtils.deserializeTxn(remainingdata);
-                        packet.hdr = logEntry.getHeader();
-                        packet.rec = logEntry.getTxn();
-                        packet.digest = logEntry.getDigest();
-                        QuorumVerifier qv = self.configFromString(new String(((SetDataTxn) packet.rec).getData(), UTF_8));
-                        boolean majorChange = self.processReconfig(qv, suggestedLeaderId, qp.getZxid(), true);
-                        if (majorChange) {
-                            throw new Exception("changes proposed in reconfig");
-                        }
-                    } else {
+                    case Leader.PROPOSAL:
+                        PacketInFlight pif = new PacketInFlight();
                         logEntry = SerializeUtils.deserializeTxn(qp.getData());
-                        packet.rec = logEntry.getTxn();
-                        packet.hdr = logEntry.getHeader();
-                        packet.digest = logEntry.getDigest();
-                        // Log warning message if txn comes out-of-order
-                        if (packet.hdr.getZxid() != lastQueued + 1) {
+                        pif.hdr = logEntry.getHeader();
+                        pif.rec = logEntry.getTxn();
+                        pif.digest = logEntry.getDigest();
+                        if (pif.hdr.getZxid() != lastQueued + 1) {
                             LOG.warn(
-                                "Got zxid 0x{} expected 0x{}",
-                                Long.toHexString(packet.hdr.getZxid()),
-                                Long.toHexString(lastQueued + 1));
+                                    "Got zxid 0x{} expected 0x{}",
+                                    Long.toHexString(pif.hdr.getZxid()),
+                                    Long.toHexString(lastQueued + 1));
                         }
-                        lastQueued = packet.hdr.getZxid();
-                    }
-                    if (!writeToTxnLog) {
-                        // Apply to db directly if we haven't taken the snapshot
-                        zk.processTxn(packet.hdr, packet.rec);
-                    } else {
-                        packetsNotCommitted.add(packet);
-                        packetsCommitted.add(qp.getZxid());
-                    }
+                        lastQueued = pif.hdr.getZxid();
 
-                    break;
-                case Leader.UPTODATE:
-                    LOG.info("Learner received UPTODATE message");
-                    if (newLeaderQV != null) {
-                        boolean majorChange = self.processReconfig(newLeaderQV, null, null, true);
-                        if (majorChange) {
-                            throw new Exception("changes proposed in reconfig");
-                        }
-                    }
-                    if (isPreZAB1_0) {
-                        zk.takeSnapshot(syncSnapshot);
-                        self.setCurrentEpoch(newEpoch);
-                    }
-                    self.setZooKeeperServer(zk);
-                    self.adminServer.setZooKeeperServer(zk);
-                    break outerLoop;
-                case Leader.NEWLEADER: // Getting NEWLEADER here instead of in discovery
-                    // means this is Zab 1.0
-                    LOG.info("Learner received NEWLEADER message");
-                    if (qp.getData() != null && qp.getData().length > 1) {
-                        try {
-                            QuorumVerifier qv = self.configFromString(new String(qp.getData(), UTF_8));
+                        if (pif.hdr.getType() == OpCode.reconfig) {
+                            SetDataTxn setDataTxn = (SetDataTxn) pif.rec;
+                            QuorumVerifier qv = self.configFromString(new String(setDataTxn.getData(), UTF_8));
                             self.setLastSeenQuorumVerifier(qv, true);
-                            newLeaderQV = qv;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    if (snapshotNeeded) {
-                        zk.takeSnapshot(syncSnapshot);
-                    }
-
-
-                    writeToTxnLog = true;
-                    //Anything after this needs to go to the transaction log, not applied directly in memory
-                    isPreZAB1_0 = false;
-
-                    // ZOOKEEPER-3911: make sure sync the uncommitted logs before commit them (ACK NEWLEADER).
-                    sock.setSoTimeout(self.tickTime * self.syncLimit);
-                    self.setSyncMode(QuorumPeer.SyncMode.NONE);
-                    zk.startupWithoutServing();
-                    if (zk instanceof FollowerZooKeeperServer) {
-                        long startTime = Time.currentElapsedTime();
-                        FollowerZooKeeperServer fzk = (FollowerZooKeeperServer) zk;
-                        for (PacketInFlight p : packetsNotCommitted) {
-                            final Request request = fzk.appendRequest(p.hdr, p.rec, p.digest);
-                            requestsToAck.add(request);
                         }
 
-                        // persist the txns to disk
-                        fzk.getZKDatabase().commit();
-                        LOG.info("{} txns have been persisted and it took {}ms",
-                        packetsNotCommitted.size(), Time.currentElapsedTime() - startTime);
-                        packetsNotCommitted.clear();
-                    }
+                        packetsNotCommitted.add(pif);
+                        break;
+                    case Leader.COMMIT:
+                    case Leader.COMMITANDACTIVATE:
+                        pif = packetsNotCommitted.peekFirst();
+                        if (pif.hdr.getZxid() == qp.getZxid() && qp.getType() == Leader.COMMITANDACTIVATE) {
+                            QuorumVerifier qv = self
+                                    .configFromString(new String(((SetDataTxn) pif.rec).getData(), UTF_8));
+                            boolean majorChange = self.processReconfig(
+                                    qv,
+                                    ByteBuffer.wrap(qp.getData()).getLong(), qp.getZxid(),
+                                    true);
+                            if (majorChange) {
+                                throw new Exception("changes proposed in reconfig");
+                            }
+                        }
+                        if (!writeToTxnLog) {
+                            if (pif.hdr.getZxid() != qp.getZxid()) {
+                                LOG.warn(
+                                        "Committing 0x{}, but next proposal is 0x{}",
+                                        Long.toHexString(qp.getZxid()),
+                                        Long.toHexString(pif.hdr.getZxid()));
+                            } else {
+                                zk.processTxn(pif.hdr, pif.rec);
+                                packetsNotCommitted.remove();
+                            }
+                        } else {
+                            packetsCommitted.add(qp.getZxid());
+                        }
+                        break;
+                    case Leader.INFORM:
+                    case Leader.INFORMANDACTIVATE:
+                        PacketInFlight packet = new PacketInFlight();
 
-                    // set the current epoch after all the tnxs are persisted
-                    self.setCurrentEpoch(newEpoch);
-                    LOG.info("Set the current epoch to {}", newEpoch);
+                        if (qp.getType() == Leader.INFORMANDACTIVATE) {
+                            ByteBuffer buffer = ByteBuffer.wrap(qp.getData());
+                            long suggestedLeaderId = buffer.getLong();
+                            byte[] remainingdata = new byte[buffer.remaining()];
+                            buffer.get(remainingdata);
+                            logEntry = SerializeUtils.deserializeTxn(remainingdata);
+                            packet.hdr = logEntry.getHeader();
+                            packet.rec = logEntry.getTxn();
+                            packet.digest = logEntry.getDigest();
+                            QuorumVerifier qv = self
+                                    .configFromString(new String(((SetDataTxn) packet.rec).getData(), UTF_8));
+                            boolean majorChange = self.processReconfig(qv, suggestedLeaderId, qp.getZxid(), true);
+                            if (majorChange) {
+                                throw new Exception("changes proposed in reconfig");
+                            }
+                        } else {
+                            logEntry = SerializeUtils.deserializeTxn(qp.getData());
+                            packet.rec = logEntry.getTxn();
+                            packet.hdr = logEntry.getHeader();
+                            packet.digest = logEntry.getDigest();
+                            // Log warning message if txn comes out-of-order
+                            if (packet.hdr.getZxid() != lastQueued + 1) {
+                                LOG.warn(
+                                        "Got zxid 0x{} expected 0x{}",
+                                        Long.toHexString(packet.hdr.getZxid()),
+                                        Long.toHexString(lastQueued + 1));
+                            }
+                            lastQueued = packet.hdr.getZxid();
+                        }
+                        if (!writeToTxnLog) {
+                            // Apply to db directly if we haven't taken the snapshot
+                            zk.processTxn(packet.hdr, packet.rec);
+                        } else {
+                            packetsNotCommitted.add(packet);
+                            packetsCommitted.add(qp.getZxid());
+                        }
 
-                    // send NEWLEADER ack after all the tnxs are persisted
-                    writePacket(new QuorumPacket(Leader.ACK, newLeaderZxid, null, null), true);
-                    LOG.info("Sent NEWLEADER ack to leader with zxid {}", Long.toHexString(newLeaderZxid));
-                    break;
+                        break;
+                    case Leader.UPTODATE:
+                        LOG.info("Learner received UPTODATE message");
+                        if (newLeaderQV != null) {
+                            boolean majorChange = self.processReconfig(newLeaderQV, null, null, true);
+                            if (majorChange) {
+                                throw new Exception("changes proposed in reconfig");
+                            }
+                        }
+                        if (isPreZAB1_0) {
+                            zk.takeSnapshot(syncSnapshot);
+                            self.setCurrentEpoch(newEpoch);
+                        }
+                        self.setZooKeeperServer(zk);
+                        self.adminServer.setZooKeeperServer(zk);
+                        break outerLoop;
+                    case Leader.NEWLEADER: // Getting NEWLEADER here instead of in discovery
+                        // means this is Zab 1.0
+                        LOG.info("Learner received NEWLEADER message");
+                        if (qp.getData() != null && qp.getData().length > 1) {
+                            try {
+                                QuorumVerifier qv = self.configFromString(new String(qp.getData(), UTF_8));
+                                self.setLastSeenQuorumVerifier(qv, true);
+                                newLeaderQV = qv;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        if (snapshotNeeded) {
+                            zk.takeSnapshot(syncSnapshot);
+                        }
+
+                        writeToTxnLog = true;
+                        // Anything after this needs to go to the transaction log, not applied directly
+                        // in memory
+                        isPreZAB1_0 = false;
+
+                        // ZOOKEEPER-3911: make sure sync the uncommitted logs before commit them (ACK
+                        // NEWLEADER).
+                        sock.setSoTimeout(self.tickTime * self.syncLimit);
+                        self.setSyncMode(QuorumPeer.SyncMode.NONE);
+                        zk.startupWithoutServing();
+                        if (zk instanceof FollowerZooKeeperServer) {
+                            long startTime = Time.currentElapsedTime();
+                            FollowerZooKeeperServer fzk = (FollowerZooKeeperServer) zk;
+                            for (PacketInFlight p : packetsNotCommitted) {
+                                final Request request = fzk.appendRequest(p.hdr, p.rec, p.digest);
+                                requestsToAck.add(request);
+                            }
+
+                            // persist the txns to disk
+                            fzk.getZKDatabase().commit();
+                            LOG.info("{} txns have been persisted and it took {}ms",
+                                    packetsNotCommitted.size(), Time.currentElapsedTime() - startTime);
+                            packetsNotCommitted.clear();
+                        }
+
+                        // set the current epoch after all the tnxs are persisted
+                        self.setCurrentEpoch(newEpoch);
+                        LOG.info("Set the current epoch to {}", newEpoch);
+
+                        // send NEWLEADER ack after all the tnxs are persisted
+                        writePacket(new QuorumPacket(Leader.ACK, newLeaderZxid, null, null), true);
+                        LOG.info("Sent NEWLEADER ack to leader with zxid {}", Long.toHexString(newLeaderZxid));
+                        break;
                 }
             }
         }
@@ -796,7 +834,8 @@ public class Learner {
 
         // We need to log the stuff that came in between the snapshot and the uptodate
         if (zk instanceof FollowerZooKeeperServer) {
-            // reply ACK of PROPOSAL after ACK of NEWLEADER to avoid leader shutdown due to timeout
+            // reply ACK of PROPOSAL after ACK of NEWLEADER to avoid leader shutdown due to
+            // timeout
             // on waiting for a quorum of followers
             for (final Request request : requestsToAck) {
                 final QuorumPacket ackPacket = new QuorumPacket(Leader.ACK, request.getHdr().getZxid(), null, null);
@@ -825,9 +864,9 @@ public class Learner {
                     // log warning message if there is no matching commit
                     // old leader send outstanding proposal to observer
                     LOG.warn(
-                        "Committing 0x{}, but next proposal is 0x{}",
-                        Long.toHexString(zxid),
-                        Long.toHexString(p.hdr.getZxid()));
+                            "Committing 0x{}, but next proposal is 0x{}",
+                            Long.toHexString(zxid),
+                            Long.toHexString(p.hdr.getZxid()));
                     continue;
                 }
                 packetsCommitted.remove();
@@ -854,9 +893,9 @@ public class Learner {
         }
         if (LOG.isTraceEnabled()) {
             ZooTrace.logTraceMessage(
-                LOG,
-                ZooTrace.SESSION_TRACE_MASK,
-                "Session 0x" + Long.toHexString(sessionId) + " is valid: " + valid);
+                    LOG,
+                    ZooTrace.SESSION_TRACE_MASK,
+                    "Session 0x" + Long.toHexString(sessionId) + " is valid: " + valid);
         }
     }
 
@@ -903,7 +942,8 @@ public class Learner {
         if (sock != null) {
             if (sockBeingClosed.compareAndSet(false, true)) {
                 if (closeSocketAsync) {
-                    final Thread closingThread = new Thread(() -> closeSockSync(), "CloseSocketThread(sid:" + zk.getServerId());
+                    final Thread closingThread = new Thread(() -> closeSockSync(),
+                            "CloseSocketThread(sid:" + zk.getServerId());
                     closingThread.setDaemon(true);
                     closingThread.start();
                 } else {

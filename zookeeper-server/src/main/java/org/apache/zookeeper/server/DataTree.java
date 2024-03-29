@@ -22,6 +22,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -88,7 +89,8 @@ import org.slf4j.LoggerFactory;
  * This class maintains the tree data structure. It doesn't have any networking
  * or client connection code in it so that it can be tested in a standalone way.
  *
- * <p>The tree maintains two parallel data structures: a hashtable that maps from
+ * <p>
+ * The tree maintains two parallel data structures: a hashtable that maps from
  * full paths to DataNodes and a tree of DataNodes. All accesses to a path is
  * through the hashtable. The tree is traversed only when serializing to disk.
  */
@@ -308,7 +310,8 @@ public class DataTree {
     }
 
     /**
-     * create a /zookeeper/config node for maintaining the configuration (membership and quorum system) info for
+     * create a /zookeeper/config node for maintaining the configuration (membership
+     * and quorum system) info for
      * zookeeper
      */
     public void addConfigNode() {
@@ -332,14 +335,14 @@ public class DataTree {
      * is the path one of the special paths owned by zookeeper.
      *
      * @param path
-     *            the path to be checked
+     *             the path to be checked
      * @return true if a special path. false if not.
      */
     boolean isSpecialPath(String path) {
         return rootZookeeper.equals(path)
-               || procZookeeper.equals(path)
-               || quotaZookeeper.equals(path)
-               || configZookeeper.equals(path);
+                || procZookeeper.equals(path)
+                || quotaZookeeper.equals(path)
+                || configZookeeper.equals(path);
     }
 
     public static void copyStatPersisted(StatPersisted from, StatPersisted to) {
@@ -372,11 +375,11 @@ public class DataTree {
      * update the count/bytes of this stat data node
      *
      * @param lastPrefix
-     *            the path of the node that has a quota.
+     *                   the path of the node that has a quota.
      * @param bytesDiff
-     *            the diff to be added to number of bytes
+     *                   the diff to be added to number of bytes
      * @param countDiff
-     *            the diff to be added to the count
+     *                   the diff to be added to the count
      */
     public void updateQuotaStat(String lastPrefix, long bytesDiff, int countDiff) {
         String statNodePath = Quotas.statPath(lastPrefix);
@@ -398,45 +401,51 @@ public class DataTree {
 
     /**
      * Add a new node to the DataTree.
+     * 
      * @param path
-     *            Path for the new node.
+     *                       Path for the new node.
      * @param data
-     *            Data to store in the node.
+     *                       Data to store in the node.
      * @param acl
-     *            Node acls
+     *                       Node acls
      * @param ephemeralOwner
-     *            the session id that owns this node. -1 indicates this is not
-     *            an ephemeral node.
+     *                       the session id that owns this node. -1 indicates this
+     *                       is not
+     *                       an ephemeral node.
      * @param zxid
-     *            Transaction ID
+     *                       Transaction ID
      * @param time
      * @throws NodeExistsException
      * @throws NoNodeException
      */
-    public void createNode(final String path, byte[] data, List<ACL> acl, long ephemeralOwner, int parentCVersion, long zxid, long time) throws NoNodeException, NodeExistsException {
+    public void createNode(final String path, byte[] data, List<ACL> acl, long ephemeralOwner, int parentCVersion,
+            long zxid, long time) throws NoNodeException, NodeExistsException {
         createNode(path, data, acl, ephemeralOwner, parentCVersion, zxid, time, null);
     }
 
     /**
      * Add a new node to the DataTree.
+     * 
      * @param path
-     *            Path for the new node.
+     *                       Path for the new node.
      * @param data
-     *            Data to store in the node.
+     *                       Data to store in the node.
      * @param acl
-     *            Node acls
+     *                       Node acls
      * @param ephemeralOwner
-     *            the session id that owns this node. -1 indicates this is not
-     *            an ephemeral node.
+     *                       the session id that owns this node. -1 indicates this
+     *                       is not
+     *                       an ephemeral node.
      * @param zxid
-     *            Transaction ID
+     *                       Transaction ID
      * @param time
      * @param outputStat
-     *            A Stat object to store Stat output results into.
+     *                       A Stat object to store Stat output results into.
      * @throws NodeExistsException
      * @throws NoNodeException
      */
-    public void createNode(final String path, byte[] data, List<ACL> acl, long ephemeralOwner, int parentCVersion, long zxid, long time, Stat outputStat) throws NoNodeException, NodeExistsException {
+    public void createNode(final String path, byte[] data, List<ACL> acl, long ephemeralOwner, int parentCVersion,
+            long zxid, long time, Stat outputStat) throws NoNodeException, NodeExistsException {
         int lastSlash = path.lastIndexOf('/');
         String parentName = path.substring(0, lastSlash);
         String childName = path.substring(lastSlash + 1);
@@ -517,25 +526,26 @@ public class DataTree {
         String lastPrefix = getMaxPrefixWithQuota(path);
         long bytes = data == null ? 0 : data.length;
         // also check to update the quotas for this node
-        if (lastPrefix != null) {    // ok we have some match and need to update
+        if (lastPrefix != null) { // ok we have some match and need to update
             updateQuotaStat(lastPrefix, bytes, 1);
         }
         updateWriteStat(path, bytes);
         dataWatches.triggerWatch(path, Event.EventType.NodeCreated, zxid, acl);
         childWatches.triggerWatch(parentName.equals("") ? "/" : parentName,
-            Event.EventType.NodeChildrenChanged, zxid, parentAcl);
+                Event.EventType.NodeChildrenChanged, zxid, parentAcl);
     }
 
     /**
      * remove the path from the datatree
      *
      * @param path
-     *            the path to of the node to be deleted
+     *             the path to of the node to be deleted
      * @param zxid
-     *            the current zxid
+     *             the current zxid
      * @throws NoNodeException
      */
     public void deleteNode(String path, long zxid) throws NoNodeException {
+        LOG.info("DIMAS: deletenode clab0 " + Instant.now());
         int lastSlash = path.lastIndexOf('/');
         String parentName = path.substring(0, lastSlash);
         String childName = path.substring(lastSlash + 1);
@@ -614,19 +624,19 @@ public class DataTree {
 
         if (LOG.isTraceEnabled()) {
             ZooTrace.logTraceMessage(
-                LOG,
-                ZooTrace.EVENT_DELIVERY_TRACE_MASK,
-                "dataWatches.triggerWatch " + path);
+                    LOG,
+                    ZooTrace.EVENT_DELIVERY_TRACE_MASK,
+                    "dataWatches.triggerWatch " + path);
             ZooTrace.logTraceMessage(
-                LOG,
-                ZooTrace.EVENT_DELIVERY_TRACE_MASK,
-                "childWatches.triggerWatch " + parentName);
+                    LOG,
+                    ZooTrace.EVENT_DELIVERY_TRACE_MASK,
+                    "childWatches.triggerWatch " + parentName);
         }
 
         WatcherOrBitSet processed = dataWatches.triggerWatch(path, EventType.NodeDeleted, zxid, acl);
         childWatches.triggerWatch(path, EventType.NodeDeleted, zxid, acl, processed);
         childWatches.triggerWatch("".equals(parentName) ? "/" : parentName,
-            EventType.NodeChildrenChanged, zxid, parentAcl);
+                EventType.NodeChildrenChanged, zxid, parentAcl);
     }
 
     public Stat setData(String path, byte[] data, int version, long zxid, long time) throws NoNodeException {
@@ -667,6 +677,7 @@ public class DataTree {
     /**
      * If there is a quota set, return the appropriate prefix for that quota
      * Else return null
+     * 
      * @param path The ZK path to check for quota
      * @return Max quota prefix, or null if none
      */
@@ -859,6 +870,7 @@ public class DataTree {
 
     public ProcessTxnResult processTxn(TxnHeader header, Record txn, boolean isSubTxn) {
         ProcessTxnResult rc = new ProcessTxnResult();
+        LOG.info("DIMAS: dataTree " + header.getType());
 
         try {
             rc.clientId = header.getClientId();
@@ -868,175 +880,175 @@ public class DataTree {
             rc.err = 0;
             rc.multiResult = null;
             switch (header.getType()) {
-            case OpCode.create:
-                CreateTxn createTxn = (CreateTxn) txn;
-                rc.path = createTxn.getPath();
-                createNode(
-                    createTxn.getPath(),
-                    createTxn.getData(),
-                    createTxn.getAcl(),
-                    createTxn.getEphemeral() ? header.getClientId() : 0,
-                    createTxn.getParentCVersion(),
-                    header.getZxid(),
-                    header.getTime(),
-                    null);
-                break;
-            case OpCode.create2:
-                CreateTxn create2Txn = (CreateTxn) txn;
-                rc.path = create2Txn.getPath();
-                Stat stat = new Stat();
-                createNode(
-                    create2Txn.getPath(),
-                    create2Txn.getData(),
-                    create2Txn.getAcl(),
-                    create2Txn.getEphemeral() ? header.getClientId() : 0,
-                    create2Txn.getParentCVersion(),
-                    header.getZxid(),
-                    header.getTime(),
-                    stat);
-                rc.stat = stat;
-                break;
-            case OpCode.createTTL:
-                CreateTTLTxn createTtlTxn = (CreateTTLTxn) txn;
-                rc.path = createTtlTxn.getPath();
-                stat = new Stat();
-                createNode(
-                    createTtlTxn.getPath(),
-                    createTtlTxn.getData(),
-                    createTtlTxn.getAcl(),
-                    EphemeralType.TTL.toEphemeralOwner(createTtlTxn.getTtl()),
-                    createTtlTxn.getParentCVersion(),
-                    header.getZxid(),
-                    header.getTime(),
-                    stat);
-                rc.stat = stat;
-                break;
-            case OpCode.createContainer:
-                CreateContainerTxn createContainerTxn = (CreateContainerTxn) txn;
-                rc.path = createContainerTxn.getPath();
-                stat = new Stat();
-                createNode(
-                    createContainerTxn.getPath(),
-                    createContainerTxn.getData(),
-                    createContainerTxn.getAcl(),
-                    EphemeralType.CONTAINER_EPHEMERAL_OWNER,
-                    createContainerTxn.getParentCVersion(),
-                    header.getZxid(),
-                    header.getTime(),
-                    stat);
-                rc.stat = stat;
-                break;
-            case OpCode.delete:
-            case OpCode.deleteContainer:
-                DeleteTxn deleteTxn = (DeleteTxn) txn;
-                rc.path = deleteTxn.getPath();
-                deleteNode(deleteTxn.getPath(), header.getZxid());
-                break;
-            case OpCode.reconfig:
-            case OpCode.setData:
-                SetDataTxn setDataTxn = (SetDataTxn) txn;
-                rc.path = setDataTxn.getPath();
-                rc.stat = setData(
-                    setDataTxn.getPath(),
-                    setDataTxn.getData(),
-                    setDataTxn.getVersion(),
-                    header.getZxid(),
-                    header.getTime());
-                break;
-            case OpCode.setACL:
-                SetACLTxn setACLTxn = (SetACLTxn) txn;
-                rc.path = setACLTxn.getPath();
-                rc.stat = setACL(setACLTxn.getPath(), setACLTxn.getAcl(), setACLTxn.getVersion());
-                break;
-            case OpCode.closeSession:
-                long sessionId = header.getClientId();
-                if (txn != null) {
-                    killSession(sessionId, header.getZxid(),
-                            ephemerals.remove(sessionId),
-                            ((CloseSessionTxn) txn).getPaths2Delete());
-                } else {
-                    killSession(sessionId, header.getZxid());
-                }
-                break;
-            case OpCode.error:
-                ErrorTxn errTxn = (ErrorTxn) txn;
-                rc.err = errTxn.getErr();
-                break;
-            case OpCode.check:
-                CheckVersionTxn checkTxn = (CheckVersionTxn) txn;
-                rc.path = checkTxn.getPath();
-                break;
-            case OpCode.multi:
-                MultiTxn multiTxn = (MultiTxn) txn;
-                List<Txn> txns = multiTxn.getTxns();
-                rc.multiResult = new ArrayList<>();
-                boolean failed = false;
-                for (Txn subtxn : txns) {
-                    if (subtxn.getType() == OpCode.error) {
-                        failed = true;
-                        break;
+                case OpCode.create:
+                    CreateTxn createTxn = (CreateTxn) txn;
+                    rc.path = createTxn.getPath();
+                    createNode(
+                            createTxn.getPath(),
+                            createTxn.getData(),
+                            createTxn.getAcl(),
+                            createTxn.getEphemeral() ? header.getClientId() : 0,
+                            createTxn.getParentCVersion(),
+                            header.getZxid(),
+                            header.getTime(),
+                            null);
+                    break;
+                case OpCode.create2:
+                    CreateTxn create2Txn = (CreateTxn) txn;
+                    rc.path = create2Txn.getPath();
+                    Stat stat = new Stat();
+                    createNode(
+                            create2Txn.getPath(),
+                            create2Txn.getData(),
+                            create2Txn.getAcl(),
+                            create2Txn.getEphemeral() ? header.getClientId() : 0,
+                            create2Txn.getParentCVersion(),
+                            header.getZxid(),
+                            header.getTime(),
+                            stat);
+                    rc.stat = stat;
+                    break;
+                case OpCode.createTTL:
+                    CreateTTLTxn createTtlTxn = (CreateTTLTxn) txn;
+                    rc.path = createTtlTxn.getPath();
+                    stat = new Stat();
+                    createNode(
+                            createTtlTxn.getPath(),
+                            createTtlTxn.getData(),
+                            createTtlTxn.getAcl(),
+                            EphemeralType.TTL.toEphemeralOwner(createTtlTxn.getTtl()),
+                            createTtlTxn.getParentCVersion(),
+                            header.getZxid(),
+                            header.getTime(),
+                            stat);
+                    rc.stat = stat;
+                    break;
+                case OpCode.createContainer:
+                    CreateContainerTxn createContainerTxn = (CreateContainerTxn) txn;
+                    rc.path = createContainerTxn.getPath();
+                    stat = new Stat();
+                    createNode(
+                            createContainerTxn.getPath(),
+                            createContainerTxn.getData(),
+                            createContainerTxn.getAcl(),
+                            EphemeralType.CONTAINER_EPHEMERAL_OWNER,
+                            createContainerTxn.getParentCVersion(),
+                            header.getZxid(),
+                            header.getTime(),
+                            stat);
+                    rc.stat = stat;
+                    break;
+                case OpCode.delete:
+                case OpCode.deleteContainer:
+                    DeleteTxn deleteTxn = (DeleteTxn) txn;
+                    rc.path = deleteTxn.getPath();
+                    deleteNode(deleteTxn.getPath(), header.getZxid());
+                    break;
+                case OpCode.reconfig:
+                case OpCode.setData:
+                    SetDataTxn setDataTxn = (SetDataTxn) txn;
+                    rc.path = setDataTxn.getPath();
+                    rc.stat = setData(
+                            setDataTxn.getPath(),
+                            setDataTxn.getData(),
+                            setDataTxn.getVersion(),
+                            header.getZxid(),
+                            header.getTime());
+                    break;
+                case OpCode.setACL:
+                    SetACLTxn setACLTxn = (SetACLTxn) txn;
+                    rc.path = setACLTxn.getPath();
+                    rc.stat = setACL(setACLTxn.getPath(), setACLTxn.getAcl(), setACLTxn.getVersion());
+                    break;
+                case OpCode.closeSession:
+                    long sessionId = header.getClientId();
+                    if (txn != null) {
+                        killSession(sessionId, header.getZxid(),
+                                ephemerals.remove(sessionId),
+                                ((CloseSessionTxn) txn).getPaths2Delete());
+                    } else {
+                        killSession(sessionId, header.getZxid());
                     }
-                }
-
-                boolean post_failed = false;
-                for (Txn subtxn : txns) {
-                    ByteBuffer bb = ByteBuffer.wrap(subtxn.getData());
-                    Record record;
-                    switch (subtxn.getType()) {
-                    case OpCode.create:
-                    case OpCode.create2:
-                        record = new CreateTxn();
-                        break;
-                    case OpCode.createTTL:
-                        record = new CreateTTLTxn();
-                        break;
-                    case OpCode.createContainer:
-                        record = new CreateContainerTxn();
-                        break;
-                    case OpCode.delete:
-                    case OpCode.deleteContainer:
-                        record = new DeleteTxn();
-                        break;
-                    case OpCode.setData:
-                        record = new SetDataTxn();
-                        break;
-                    case OpCode.error:
-                        record = new ErrorTxn();
-                        post_failed = true;
-                        break;
-                    case OpCode.check:
-                        record = new CheckVersionTxn();
-                        break;
-                    default:
-                        throw new IOException("Invalid type of op: " + subtxn.getType());
+                    break;
+                case OpCode.error:
+                    ErrorTxn errTxn = (ErrorTxn) txn;
+                    rc.err = errTxn.getErr();
+                    break;
+                case OpCode.check:
+                    CheckVersionTxn checkTxn = (CheckVersionTxn) txn;
+                    rc.path = checkTxn.getPath();
+                    break;
+                case OpCode.multi:
+                    MultiTxn multiTxn = (MultiTxn) txn;
+                    List<Txn> txns = multiTxn.getTxns();
+                    rc.multiResult = new ArrayList<>();
+                    boolean failed = false;
+                    for (Txn subtxn : txns) {
+                        if (subtxn.getType() == OpCode.error) {
+                            failed = true;
+                            break;
+                        }
                     }
 
-                    assert record != null;
+                    boolean post_failed = false;
+                    for (Txn subtxn : txns) {
+                        ByteBuffer bb = ByteBuffer.wrap(subtxn.getData());
+                        Record record;
+                        switch (subtxn.getType()) {
+                            case OpCode.create:
+                            case OpCode.create2:
+                                record = new CreateTxn();
+                                break;
+                            case OpCode.createTTL:
+                                record = new CreateTTLTxn();
+                                break;
+                            case OpCode.createContainer:
+                                record = new CreateContainerTxn();
+                                break;
+                            case OpCode.delete:
+                            case OpCode.deleteContainer:
+                                record = new DeleteTxn();
+                                break;
+                            case OpCode.setData:
+                                record = new SetDataTxn();
+                                break;
+                            case OpCode.error:
+                                record = new ErrorTxn();
+                                post_failed = true;
+                                break;
+                            case OpCode.check:
+                                record = new CheckVersionTxn();
+                                break;
+                            default:
+                                throw new IOException("Invalid type of op: " + subtxn.getType());
+                        }
 
-                    ByteBufferInputStream.byteBuffer2Record(bb, record);
+                        assert record != null;
 
-                    if (failed && subtxn.getType() != OpCode.error) {
-                        int ec = post_failed ? Code.RUNTIMEINCONSISTENCY.intValue() : Code.OK.intValue();
+                        ByteBufferInputStream.byteBuffer2Record(bb, record);
 
-                        subtxn.setType(OpCode.error);
-                        record = new ErrorTxn(ec);
+                        if (failed && subtxn.getType() != OpCode.error) {
+                            int ec = post_failed ? Code.RUNTIMEINCONSISTENCY.intValue() : Code.OK.intValue();
+
+                            subtxn.setType(OpCode.error);
+                            record = new ErrorTxn(ec);
+                        }
+
+                        assert !failed || (subtxn.getType() == OpCode.error);
+
+                        TxnHeader subHdr = new TxnHeader(
+                                header.getClientId(),
+                                header.getCxid(),
+                                header.getZxid(),
+                                header.getTime(),
+                                subtxn.getType());
+                        ProcessTxnResult subRc = processTxn(subHdr, record, true);
+                        rc.multiResult.add(subRc);
+                        if (subRc.err != 0 && rc.err == 0) {
+                            rc.err = subRc.err;
+                        }
                     }
-
-                    assert !failed || (subtxn.getType() == OpCode.error);
-
-                    TxnHeader subHdr = new TxnHeader(
-                        header.getClientId(),
-                        header.getCxid(),
-                        header.getZxid(),
-                        header.getTime(),
-                        subtxn.getType());
-                    ProcessTxnResult subRc = processTxn(subHdr, record, true);
-                    rc.multiResult.add(subRc);
-                    if (subRc.err != 0 && rc.err == 0) {
-                        rc.err = subRc.err;
-                    }
-                }
-                break;
+                    break;
             }
         } catch (KeeperException e) {
             LOG.debug("Failed: {}:{}", header, txn, e);
@@ -1104,7 +1116,7 @@ public class DataTree {
              * method assumes that transaction to be present in the snapshot.
              *
              * To avoid this, we first apply the transaction and then modify
-             * lastProcessedZxid.  During restore, we correctly handle the
+             * lastProcessedZxid. During restore, we correctly handle the
              * case where the snapshot contains data ahead of the zxid associated
              * with the file.
              */
@@ -1146,14 +1158,14 @@ public class DataTree {
         if (paths2DeleteInTxn != null) {
             // explicitly check and remove to avoid potential performance
             // issue when using removeAll
-            for (String path: paths2DeleteInTxn) {
+            for (String path : paths2DeleteInTxn) {
                 paths2DeleteLocal.remove(path);
             }
             if (!paths2DeleteLocal.isEmpty()) {
                 LOG.warn(
-                    "Unexpected extra paths under session {} which are not in txn 0x{}",
-                    paths2DeleteLocal,
-                    Long.toHexString(zxid));
+                        "Unexpected extra paths under session {} which are not in txn 0x{}",
+                        paths2DeleteLocal,
+                        Long.toHexString(zxid));
             }
         }
 
@@ -1170,7 +1182,7 @@ public class DataTree {
                 LOG.debug("Deleting ephemeral node {} for session {}", path, sessionHex);
             } catch (NoNodeException e) {
                 LOG.warn(
-                    "Ignoring NoNodeException for path {} while removing ephemeral for dead session {}",
+                        "Ignoring NoNodeException for path {} while removing ephemeral for dead session {}",
                         path, sessionHex);
             }
             if (ZKAuditProvider.isAuditEnabled()) {
@@ -1198,7 +1210,7 @@ public class DataTree {
     /**
      * this method gets the count of nodes and the bytes under a subtree
      *
-     * @param path the path to be used
+     * @param path   the path to be used
      * @param counts the int count
      */
     private void getCounts(String path, Counts counts) {
@@ -1292,7 +1304,7 @@ public class DataTree {
      * this method uses a stringbuilder to create a new path for children. This
      * is faster than string appends ( str1 + str2).
      *
-     * @param oa OutputArchive to write to.
+     * @param oa   OutputArchive to write to.
      * @param path a string builder.
      * @throws IOException
      */
@@ -1307,8 +1319,8 @@ public class DataTree {
         synchronized (node) {
             StatPersisted statCopy = new StatPersisted();
             copyStatPersisted(node.stat, statCopy);
-            //we do not need to make a copy of node.data because the contents
-            //are never changed
+            // we do not need to make a copy of node.data because the contents
+            // are never changed
             nodeCopy = new DataNode(node.data, node.acl, statCopy);
             children = node.getChildren().toArray(new String[0]);
         }
@@ -1316,7 +1328,8 @@ public class DataTree {
         path.append('/');
         int off = path.length();
         for (String child : children) {
-            // Since this is single buffer being reused, we need to truncate the previous bytes of string.
+            // Since this is single buffer being reused, we need to truncate the previous
+            // bytes of string.
             path.delete(off, Integer.MAX_VALUE);
             path.append(child);
             serializeNode(oa, path);
@@ -1400,6 +1413,7 @@ public class DataTree {
 
     /**
      * Summary of the watches on the datatree.
+     * 
      * @param writer the output to write to
      */
     public synchronized void dumpWatchesSummary(PrintWriter writer) {
@@ -1409,6 +1423,7 @@ public class DataTree {
     /**
      * Write a text dump of all the watches on the datatree.
      * Warning, this is expensive, use sparingly!
+     * 
      * @param writer the output to write to
      */
     public synchronized void dumpWatches(PrintWriter writer, boolean byPath) {
@@ -1447,6 +1462,7 @@ public class DataTree {
 
     /**
      * Write a text dump of all the ephemerals in the datatree.
+     * 
      * @param writer the output to write to
      */
     public void dumpEphemerals(PrintWriter writer) {
@@ -1490,8 +1506,9 @@ public class DataTree {
         childWatches.removeWatcher(watcher);
     }
 
-    public void setWatches(long relativeZxid, List<String> dataWatches, List<String> existWatches, List<String> childWatches,
-                           List<String> persistentWatches, List<String> persistentRecursiveWatches, Watcher watcher) {
+    public void setWatches(long relativeZxid, List<String> dataWatches, List<String> existWatches,
+            List<String> childWatches,
+            List<String> persistentWatches, List<String> persistentRecursiveWatches, Watcher watcher) {
         for (String path : dataWatches) {
             DataNode node = getNode(path);
             if (node == null) {
@@ -1536,14 +1553,15 @@ public class DataTree {
      * a znode for the specified path is not found.
      *
      * @param path
-     *     Full path to the znode whose Cversion needs to be modified.
-     *     A "/" at the end of the path is ignored.
+     *                    Full path to the znode whose Cversion needs to be
+     *                    modified.
+     *                    A "/" at the end of the path is ignored.
      * @param newCversion
-     *     Value to be assigned to Cversion
+     *                    Value to be assigned to Cversion
      * @param zxid
-     *     Value to be assigned to Pzxid
+     *                    Value to be assigned to Pzxid
      * @throws NoNodeException
-     *     If znode not found.
+     *                         If znode not found.
      **/
     public void setCversionPzxid(String path, int newCversion, long zxid) throws NoNodeException {
         if (path.endsWith("/")) {
@@ -1569,25 +1587,25 @@ public class DataTree {
     public boolean containsWatcher(String path, WatcherType type, Watcher watcher) {
         boolean containsWatcher = false;
         switch (type) {
-        case Children:
-            containsWatcher = this.childWatches.containsWatcher(path, watcher, WatcherMode.STANDARD);
-            break;
-        case Data:
-            containsWatcher = this.dataWatches.containsWatcher(path, watcher, WatcherMode.STANDARD);
-            break;
-        case Persistent:
-            containsWatcher = this.dataWatches.containsWatcher(path, watcher, WatcherMode.PERSISTENT);
-            break;
-        case PersistentRecursive:
-            containsWatcher = this.dataWatches.containsWatcher(path, watcher, WatcherMode.PERSISTENT_RECURSIVE);
-            break;
-        case Any:
-            if (this.childWatches.containsWatcher(path, watcher, null)) {
-                containsWatcher = true;
-            } else if (this.dataWatches.containsWatcher(path, watcher, null)) {
-                containsWatcher = true;
-            }
-            break;
+            case Children:
+                containsWatcher = this.childWatches.containsWatcher(path, watcher, WatcherMode.STANDARD);
+                break;
+            case Data:
+                containsWatcher = this.dataWatches.containsWatcher(path, watcher, WatcherMode.STANDARD);
+                break;
+            case Persistent:
+                containsWatcher = this.dataWatches.containsWatcher(path, watcher, WatcherMode.PERSISTENT);
+                break;
+            case PersistentRecursive:
+                containsWatcher = this.dataWatches.containsWatcher(path, watcher, WatcherMode.PERSISTENT_RECURSIVE);
+                break;
+            case Any:
+                if (this.childWatches.containsWatcher(path, watcher, null)) {
+                    containsWatcher = true;
+                } else if (this.dataWatches.containsWatcher(path, watcher, null)) {
+                    containsWatcher = true;
+                }
+                break;
         }
         return containsWatcher;
     }
@@ -1595,31 +1613,31 @@ public class DataTree {
     public boolean removeWatch(String path, WatcherType type, Watcher watcher) {
         boolean removed = false;
         switch (type) {
-        case Children:
-            removed = this.childWatches.removeWatcher(path, watcher, WatcherMode.STANDARD);
-            break;
-        case Data:
-            removed = this.dataWatches.removeWatcher(path, watcher, WatcherMode.STANDARD);
-            break;
-        case Persistent:
-            if (this.childWatches.removeWatcher(path, watcher, WatcherMode.PERSISTENT)) {
-                removed = true;
-            }
-            if (this.dataWatches.removeWatcher(path, watcher, WatcherMode.PERSISTENT)) {
-                removed = true;
-            }
-            break;
-        case PersistentRecursive:
-            removed = this.dataWatches.removeWatcher(path, watcher, WatcherMode.PERSISTENT_RECURSIVE);
-            break;
-        case Any:
-            if (this.childWatches.removeWatcher(path, watcher, null)) {
-                removed = true;
-            }
-            if (this.dataWatches.removeWatcher(path, watcher, null)) {
-                removed = true;
-            }
-            break;
+            case Children:
+                removed = this.childWatches.removeWatcher(path, watcher, WatcherMode.STANDARD);
+                break;
+            case Data:
+                removed = this.dataWatches.removeWatcher(path, watcher, WatcherMode.STANDARD);
+                break;
+            case Persistent:
+                if (this.childWatches.removeWatcher(path, watcher, WatcherMode.PERSISTENT)) {
+                    removed = true;
+                }
+                if (this.dataWatches.removeWatcher(path, watcher, WatcherMode.PERSISTENT)) {
+                    removed = true;
+                }
+                break;
+            case PersistentRecursive:
+                removed = this.dataWatches.removeWatcher(path, watcher, WatcherMode.PERSISTENT_RECURSIVE);
+                break;
+            case Any:
+                if (this.childWatches.removeWatcher(path, watcher, null)) {
+                    removed = true;
+                }
+                if (this.dataWatches.removeWatcher(path, watcher, null)) {
+                    removed = true;
+                }
+                break;
         }
         return removed;
     }
@@ -1688,7 +1706,7 @@ public class DataTree {
      * Deserializing the zxid digest from the input stream and update the
      * digestFromLoadedSnapshot.
      *
-     * @param ia the input stream to read from
+     * @param ia                  the input stream to read from
      * @param startZxidOfSnapshot the zxid of snapshot file
      * @return the true if it deserialized successfully
      */
@@ -1745,11 +1763,13 @@ public class DataTree {
     }
 
     /**
-     * Serializes the lastProcessedZxid so we can get it from snapshot instead the snapshot file name.
+     * Serializes the lastProcessedZxid so we can get it from snapshot instead the
+     * snapshot file name.
      * This is needed for performing snapshot and restore via admin server commands.
      *
      * @param oa the output stream to write to
-     * @return true if the lastProcessedZxid is serialized successfully, otherwise false
+     * @return true if the lastProcessedZxid is serialized successfully, otherwise
+     *         false
      * @throws IOException if there is an I/O error
      */
     public boolean serializeLastProcessedZxid(final OutputArchive oa) throws IOException {
@@ -1761,20 +1781,23 @@ public class DataTree {
     }
 
     /**
-     * Deserializes the lastProcessedZxid from the input stream and updates the lastProcessedZxid field.
+     * Deserializes the lastProcessedZxid from the input stream and updates the
+     * lastProcessedZxid field.
      *
      * @param ia the input stream to read from
-     * @return true if lastProcessedZxid is deserialized successfully, otherwise false
+     * @return true if lastProcessedZxid is deserialized successfully, otherwise
+     *         false
      * @throws IOException if there is an I/O error
      */
-    public boolean deserializeLastProcessedZxid(final InputArchive ia)  throws IOException {
+    public boolean deserializeLastProcessedZxid(final InputArchive ia) throws IOException {
         if (!ZooKeeperServer.isSerializeLastProcessedZxidEnabled()) {
             return false;
         }
         try {
             lastProcessedZxid = ia.readLong("lastZxid");
         } catch (final EOFException e) {
-            LOG.warn("Got EOFException while reading the last processed zxid, likely due to reading an older snapshot.");
+            LOG.warn(
+                    "Got EOFException while reading the last processed zxid, likely due to reading an older snapshot.");
             return false;
         }
         return true;
@@ -1790,9 +1813,9 @@ public class DataTree {
         if (zxid == digestFromLoadedSnapshot.zxid) {
             if (digestCalculator.getDigestVersion() != digestFromLoadedSnapshot.digestVersion) {
                 LOG.info(
-                    "Digest version changed, local: {}, new: {}, skip comparing digest now.",
-                    digestFromLoadedSnapshot.digestVersion,
-                    digestCalculator.getDigestVersion());
+                        "Digest version changed, local: {}, new: {}, skip comparing digest now.",
+                        digestFromLoadedSnapshot.digestVersion,
+                        digestCalculator.getDigestVersion());
                 digestFromLoadedSnapshot = null;
                 return;
             }
@@ -1808,14 +1831,16 @@ public class DataTree {
     }
 
     /**
-     * Compares the digest of the tree with the digest present in transaction digest.
+     * Compares the digest of the tree with the digest present in transaction
+     * digest.
      * If there is any error, logs and alerts the watchers.
      *
      * @param header transaction header being applied
      * @param txn    transaction
      * @param digest transaction digest
      *
-     * @return false if digest in the txn doesn't match what we have now in the data tree
+     * @return false if digest in the txn doesn't match what we have now in the data
+     *         tree
      */
     public boolean compareDigest(TxnHeader header, Record txn, TxnDigest digest) {
         long zxid = header.getZxid();
@@ -1856,6 +1881,7 @@ public class DataTree {
 
     /**
      * Reports any mismatch in the transaction digest.
+     * 
      * @param zxid zxid for which the error is being reported.
      */
     public void reportDigestMismatch(long zxid) {
@@ -1956,8 +1982,8 @@ public class DataTree {
     /**
      * Create a node stat from the given params.
      *
-     * @param zxid the zxid associated with the txn
-     * @param time the time when the txn is created
+     * @param zxid           the zxid associated with the txn
+     * @param time           the time when the txn is created
      * @param ephemeralOwner the owner if the node is an ephemeral
      * @return the stat
      */
