@@ -1860,6 +1860,7 @@ public class DataTree {
 
         long logDigest = digest.getTreeDigest();
         long actualDigest = getTreeDigest();
+        LOG.info("DIMAS: compareDigest " + header.getType() + " " + logDigest + " " + actualDigest);
         if (logDigest != actualDigest) {
             reportDigestMismatch(zxid);
             LOG.debug("Digest in log: {}, actual tree: {}", logDigest, actualDigest);
@@ -1867,6 +1868,7 @@ public class DataTree {
                 LOG.error(
                         "First digest mismatch on txn: {}, {}, expected digest is {}, actual digest is {}, ",
                         header, txn, digest, actualDigest);
+                LOG.info("DIMAS: compareDigest false " + header.getType());
                 firstMismatchTxn = false;
             }
             return false;

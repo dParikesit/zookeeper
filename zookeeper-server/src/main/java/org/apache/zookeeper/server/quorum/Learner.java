@@ -228,8 +228,8 @@ public class Learner {
 
     static boolean ifFaultInjected(String faultID) {
         boolean result = new File("/users/dimas/zookeeper/fault." + faultID).isFile();
-        if (result)
-            System.out.println("DIMAS: fault " + faultID + "triggered!");
+        // if (result)
+        // System.out.println("DIMAS: fault " + faultID + "triggered!");
         return result;
     }
 
@@ -245,6 +245,9 @@ public class Learner {
             leaderIs.readRecord(pp, "packet");
             messageTracker.trackReceived(pp.getType());
         }
+        if (pp.getType() != 5) {
+            LOG.info("DIMAS: readPacket " + pp.getType());
+        }
         if (LOG.isTraceEnabled()) {
             final long traceMask = (pp.getType() == Leader.PING) ? ZooTrace.SERVER_PING_TRACE_MASK
                     : ZooTrace.SERVER_PACKET_TRACE_MASK;
@@ -253,6 +256,7 @@ public class Learner {
         }
         if (ifFaultInjected("ZK-4773") && pp.getType() == Leader.PROPOSAL) {
             String type = LearnerHandler.packetToString(pp);
+            LOG.info("DIMAS: fault.ZK-4773 successful");
             throw new SocketTimeoutException(
                     "Socket timeout while reading the packet for operation "
                             + type);
@@ -527,6 +531,7 @@ public class Learner {
 
         writePacket(qp, true);
         readPacket(qp);
+        LOG.info("DIMAS: registerWithLeader " + qp.getType());
         final long newEpoch = ZxidUtils.getEpochFromZxid(qp.getZxid());
         if (qp.getType() == Leader.LEADERINFO) {
             // we are connected to a 1.0 server so accept the new epoch and read the next
@@ -585,6 +590,7 @@ public class Learner {
         boolean snapshotNeeded = true;
         boolean syncSnapshot = false;
         readPacket(qp);
+        LOG.info("DIMAS: syncWithLeader init " + qp.getType());
         Deque<Long> packetsCommitted = new ArrayDeque<>();
         Deque<PacketInFlight> packetsNotCommitted = new ArrayDeque<>();
         Deque<Request> requestsToAck = new ArrayDeque<>();
@@ -659,6 +665,7 @@ public class Learner {
             // UPTODATE
             outerLoop: while (self.isRunning()) {
                 readPacket(qp);
+                LOG.info("DIMAS: syncWithLeader cont " + qp.getType());
                 switch (qp.getType()) {
                     case Leader.PROPOSAL:
                         PacketInFlight pif = new PacketInFlight();
