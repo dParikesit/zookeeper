@@ -554,6 +554,7 @@ public class LearnerHandler extends ZooKeeperThread {
             // Take any necessary action if we need to send TRUNC or DIFF
             // startForwarding() will be called in all cases
             boolean needSnap = syncFollower(peerLastZxid, learnerMaster);
+            LOG.info("DIMAS: checkpoint 3 " + needSnap);
 
             // syncs between followers and the leader are exempt from throttling because it
             // is important to keep the state of quorum servers up-to-date. The exempted syncs
@@ -630,12 +631,6 @@ public class LearnerHandler extends ZooKeeperThread {
             syncLimitCheck.start();
             // sync ends when NEWLEADER-ACK is received
             syncThrottler.endSync();
-            if (needSnap) {
-                ServerMetrics.getMetrics().INFLIGHT_SNAP_COUNT.add(syncThrottler.getSyncInProgress());
-            } else {
-                ServerMetrics.getMetrics().INFLIGHT_DIFF_COUNT.add(syncThrottler.getSyncInProgress());
-            }
-            syncThrottler = null;
 
             // now that the ack has been processed expect the syncLimit
             sock.setSoTimeout(learnerMaster.syncTimeout());
@@ -644,6 +639,54 @@ public class LearnerHandler extends ZooKeeperThread {
              * Wait until learnerMaster starts up
              */
             learnerMaster.waitForStartup();
+
+            needSnap = syncFollower(peerLastZxid, learnerMaster);
+            LOG.info("DIMAS: checkpoint 4 " + needSnap);
+
+            // syncs between followers and the leader are exempt from throttling because it
+            // is important to keep the state of quorum servers up-to-date. The exempted
+            // syncs
+            // are counted as concurrent syncs though
+            /* if we are not truncating or sending a diff just send a snapshot */
+            if (needSnap) {
+                syncThrottler = learnerMaster.getLearnerSnapSyncThrottler();
+                syncThrottler.beginSync(exemptFromThrottle);
+                ServerMetrics.getMetrics().INFLIGHT_SNAP_COUNT.add(syncThrottler.getSyncInProgress());
+                try {
+                    long zxidToSend = learnerMaster.getZKDatabase().getDataTreeLastProcessedZxid();
+                    oa.writeRecord(new QuorumPacket(Leader.SNAP, zxidToSend, null, null), "packet");
+                    messageTracker.trackSent(Leader.SNAP);
+                    bufferedOutput.flush();
+
+                    LOG.info(
+                            "Sending snapshot last zxid of peer is 0x{}, zxid of leader is 0x{}, "
+                                    + "send zxid of db as 0x{}, {} concurrent snapshot sync, "
+                                    + "snapshot sync was {} from throttle",
+                            Long.toHexString(peerLastZxid),
+                            Long.toHexString(leaderLastZxid),
+                            Long.toHexString(zxidToSend),
+                            syncThrottler.getSyncInProgress(),
+                            exemptFromThrottle ? "exempt" : "not exempt");
+                    // Dump data to peer
+                    learnerMaster.getZKDatabase().serializeSnapshot(oa);
+                    oa.writeString("BenWasHere", "signature");
+                    bufferedOutput.flush();
+                } finally {
+                    ServerMetrics.getMetrics().SNAP_COUNT.add(1);
+                }
+            } else {
+                syncThrottler = learnerMaster.getLearnerDiffSyncThrottler();
+                syncThrottler.beginSync(exemptFromThrottle);
+                ServerMetrics.getMetrics().INFLIGHT_DIFF_COUNT.add(syncThrottler.getSyncInProgress());
+                ServerMetrics.getMetrics().DIFF_COUNT.add(1);
+            }
+
+            if (needSnap) {
+                ServerMetrics.getMetrics().INFLIGHT_SNAP_COUNT.add(syncThrottler.getSyncInProgress());
+            } else {
+                ServerMetrics.getMetrics().INFLIGHT_DIFF_COUNT.add(syncThrottler.getSyncInProgress());
+            }
+            syncThrottler = null;
 
             // Mutation packets will be queued during the serialize,
             // so we need to mark when the peer can actually start
@@ -884,6 +927,7 @@ public class LearnerHandler extends ZooKeeperThread {
                     currentZxid = queueCommittedProposals(txnLogItr, peerLastZxid, minCommittedLog, maxCommittedLog);
 
                     if (currentZxid < minCommittedLog) {
+                        LOG.info("DIMAS: checkpoint 1 " + needSnap);
                         LOG.info(
                             "Detected gap between end of txnlog: 0x{} and start of committedLog: 0x{}",
                             Long.toHexString(currentZxid),
@@ -893,6 +937,7 @@ public class LearnerHandler extends ZooKeeperThread {
                         // to sending a snapshot.
                         queuedPackets.clear();
                         needOpPacket = true;
+                        LOG.info("DIMAS: checkpoint 2 " + needSnap);
                     } else {
                         LOG.debug("Queueing committedLog 0x{}", Long.toHexString(currentZxid));
                         Iterator<Proposal> committedLogItr = db.getCommittedLog().iterator();
