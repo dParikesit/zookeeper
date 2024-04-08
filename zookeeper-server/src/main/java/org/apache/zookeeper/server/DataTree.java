@@ -21,6 +21,7 @@ package org.apache.zookeeper.server;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -546,6 +547,12 @@ public class DataTree {
      */
     public void deleteNode(String path, long zxid) throws NoNodeException {
         LOG.info("DIMAS: deletenode clab0 " + Instant.now());
+
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        new Throwable().printStackTrace(pw);
+        LOG.trace(sw.toString());
+
         int lastSlash = path.lastIndexOf('/');
         String parentName = path.substring(0, lastSlash);
         String childName = path.substring(lastSlash + 1);
@@ -1128,6 +1135,8 @@ public class DataTree {
                 compareSnapshotDigests(rc.zxid);
             } else {
                 // only start recording digest when we're not in fuzzy state
+                LOG.info("DIMAS: logZxidDigest txn type " + header.getType() + " zxid " + rc.zxid + " digest "
+                        + getTreeDigest());
                 logZxidDigest(rc.zxid, getTreeDigest());
             }
         }

@@ -254,12 +254,16 @@ public class Learner {
 
             ZooTrace.logQuorumPacket(LOG, traceMask, 'i', pp);
         }
-        if (ifFaultInjected("ZK-4773") && pp.getType() == Leader.PROPOSAL) {
-            String type = LearnerHandler.packetToString(pp);
-            LOG.info("DIMAS: fault.ZK-4773 successful");
-            throw new SocketTimeoutException(
-                    "Socket timeout while reading the packet for operation "
-                            + type);
+        if (pp.getType() == Leader.PROPOSAL) {
+            if (ifFaultInjected("ZK-4773")) {
+                String type = LearnerHandler.packetToString(pp);
+                LOG.info("DIMAS: fault.ZK-4773 successful");
+                throw new SocketTimeoutException(
+                        "Socket timeout while reading the packet for operation "
+                                + type);
+            } else {
+                LOG.info("DIMAS: get proposal packet");
+            }
         }
     }
 
@@ -667,62 +671,6 @@ public class Learner {
                 readPacket(qp);
                 LOG.info("DIMAS: syncWithLeader cont " + qp.getType());
                 switch (qp.getType()) {
-                    case Leader.DIFF:
-                        LOG.info("Getting a diff from the leader 0x{}", Long.toHexString(qp.getZxid()));
-                        self.setSyncMode(QuorumPeer.SyncMode.DIFF);
-                        if (zk.shouldForceWriteInitialSnapshotAfterLeaderElection()) {
-                            LOG.info(
-                                    "Forcing a snapshot write as part of upgrading from an older Zookeeper. This should only happen while upgrading.");
-                            snapshotNeeded = true;
-                            syncSnapshot = true;
-                        } else {
-                            snapshotNeeded = false;
-                        }
-                        zk.getZKDatabase().initConfigInZKDatabase(self.getQuorumVerifier());
-                        zk.createSessionTracker();
-                        writeToTxnLog = !snapshotNeeded;
-                        break;
-                    case Leader.SNAP:
-                        self.setSyncMode(QuorumPeer.SyncMode.SNAP);
-                        LOG.info("Getting a snapshot from leader 0x{}", Long.toHexString(qp.getZxid()));
-                        // The leader is going to dump the database
-                        // db is clear as part of deserializeSnapshot()
-                        zk.getZKDatabase().deserializeSnapshot(leaderIs);
-                        // ZOOKEEPER-2819: overwrite config node content extracted
-                        // from leader snapshot with local config, to avoid potential
-                        // inconsistency of config node content during rolling restart.
-                        if (!self.isReconfigEnabled()) {
-                            LOG.debug("Reset config node content from local config after deserialization of snapshot.");
-                            zk.getZKDatabase().initConfigInZKDatabase(self.getQuorumVerifier());
-                        }
-                        String signature = leaderIs.readString("signature");
-                        if (!signature.equals("BenWasHere")) {
-                            LOG.error("Missing signature. Got {}", signature);
-                            throw new IOException("Missing signature");
-                        }
-                        zk.getZKDatabase().setlastProcessedZxid(qp.getZxid());
-
-                        // immediately persist the latest snapshot when there is txn log gap
-                        syncSnapshot = true;
-                        zk.getZKDatabase().initConfigInZKDatabase(self.getQuorumVerifier());
-                        zk.createSessionTracker();
-                        writeToTxnLog = !snapshotNeeded;
-                        break;
-                    case Leader.TRUNC:
-                        // we need to truncate the log to the lastzxid of the leader
-                        self.setSyncMode(QuorumPeer.SyncMode.TRUNC);
-                        LOG.warn("Truncating log to get in sync with the leader 0x{}", Long.toHexString(qp.getZxid()));
-                        boolean truncated = zk.getZKDatabase().truncateLog(qp.getZxid());
-                        if (!truncated) {
-                            // not able to truncate the log
-                            LOG.error("Not able to truncate the log 0x{}", Long.toHexString(qp.getZxid()));
-                            ServiceUtils.requestSystemExit(ExitCode.QUORUM_PACKET_ERROR.getValue());
-                        }
-                        zk.getZKDatabase().setlastProcessedZxid(qp.getZxid());
-                        zk.getZKDatabase().initConfigInZKDatabase(self.getQuorumVerifier());
-                        zk.createSessionTracker();
-                        writeToTxnLog = !snapshotNeeded;
-                        break;
                     case Leader.PROPOSAL:
                         PacketInFlight pif = new PacketInFlight();
                         logEntry = SerializeUtils.deserializeTxn(qp.getData());
@@ -875,6 +823,8 @@ public class Learner {
                         // set the current epoch after all the tnxs are persisted
                         self.setCurrentEpoch(newEpoch);
                         LOG.info("Set the current epoch to {}", newEpoch);
+
+                        // zk.getZKDatabase().setlastProcessedZxid(qp.getZxid());
 
                         // send NEWLEADER ack after all the tnxs are persisted
                         writePacket(new QuorumPacket(Leader.ACK, newLeaderZxid, null, null), true);
