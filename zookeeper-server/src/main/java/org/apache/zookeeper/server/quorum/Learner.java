@@ -19,6 +19,7 @@
 package org.apache.zookeeper.server.quorum;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -43,7 +44,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+
 import javax.net.ssl.SSLSocket;
+
 import org.apache.jute.BinaryInputArchive;
 import org.apache.jute.BinaryOutputArchive;
 import org.apache.jute.InputArchive;
@@ -638,6 +641,7 @@ public class Learner {
                 self.setSyncMode(QuorumPeer.SyncMode.TRUNC);
                 LOG.warn("Truncating log to get in sync with the leader 0x{}", Long.toHexString(qp.getZxid()));
                 boolean truncated = zk.getZKDatabase().truncateLog(qp.getZxid());
+                LOG.info("DIMAS: truncated " + truncated + " qp.getZxid " + Long.toHexString(qp.getZxid()));
                 if (!truncated) {
                     // not able to truncate the log
                     LOG.error("Not able to truncate the log 0x{}", Long.toHexString(qp.getZxid()));

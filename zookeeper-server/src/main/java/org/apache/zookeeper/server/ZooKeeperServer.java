@@ -967,6 +967,8 @@ public class ZooKeeperServer implements SessionExpirer, ServerStats.Provider {
         }
 
         if (zkDb != null) {
+            // zkDb.clear();
+
             if (fullyShutDown) {
                 zkDb.clear();
             } else {

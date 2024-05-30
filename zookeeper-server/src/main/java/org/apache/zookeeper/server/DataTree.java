@@ -1782,10 +1782,12 @@ public class DataTree {
      * @throws IOException if there is an I/O error
      */
     public boolean serializeLastProcessedZxid(final OutputArchive oa) throws IOException {
+        LOG.info("DIMAS: start serializeLastProcessedZxid " + Long.toHexString(lastProcessedZxid));
         if (!ZooKeeperServer.isSerializeLastProcessedZxidEnabled()) {
             return false;
         }
         oa.writeLong(lastProcessedZxid, "lastZxid");
+        LOG.info("DIMAS: serializeLastProcessedZxid success " + Long.toHexString(lastProcessedZxid));
         return true;
     }
 
@@ -1809,6 +1811,7 @@ public class DataTree {
                     "Got EOFException while reading the last processed zxid, likely due to reading an older snapshot.");
             return false;
         }
+        LOG.info("DIMAS: deserializeLastProcessedZxid success " + Long.toHexString(lastProcessedZxid));
         return true;
     }
 
