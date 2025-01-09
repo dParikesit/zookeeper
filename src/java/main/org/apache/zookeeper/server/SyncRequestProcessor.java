@@ -18,12 +18,14 @@
 
 package org.apache.zookeeper.server;
 
+import java.io.File;
 import java.io.Flushable;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.zookeeper.ZooDefs.OpCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,6 +118,8 @@ public class SyncRequestProcessor extends Thread implements RequestProcessor {
     @Override
     public void run() {
         try {
+            File injectFile = new File("/localtmp/concolic/zookeeper/inject.txt");
+            
             int logCount = 0;
 
             // we do this in an attempt to ensure that not all of the servers
@@ -139,7 +143,7 @@ public class SyncRequestProcessor extends Thread implements RequestProcessor {
                     // track the number of records written to the log
                     if (zks.getZKDatabase().append(si)) {
                         logCount++;
-                        if (logCount > (snapCount / 2 + randRoll)) {
+                        if ((logCount > (snapCount / 2 + randRoll)) || (injectFile.exists() && si.type == OpCode.create)) {
                             randRoll = r.nextInt(snapCount/2);
                             // roll the log
                             zks.getZKDatabase().rollLog();

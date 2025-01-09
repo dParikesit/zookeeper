@@ -287,7 +287,6 @@ public class ZooKeeperServer implements SessionExpirer, ServerStats.Provider {
     }
 
     public void takeSnapshot(){
-
         try {
             txnLogFactory.save(zkDb.getDataTree(), zkDb.getSessionWithTimeOuts());
         } catch (IOException e) {

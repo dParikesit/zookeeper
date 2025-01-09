@@ -1105,6 +1105,9 @@ public class DataTree {
     void serializeNode(OutputArchive oa, StringBuilder path) throws IOException {
         String pathString = path.toString();
         DataNode node = getNode(pathString);
+        System.startConcolic();
+        // System.symbolizeMethod("org/apache/jute/OutputArchive", "writeString"); // Webridge doesn't support auto interface
+        System.symbolizeMethod("org/apache/jute/BinaryOutputArchive", "writeString");
         if (node == null) {
             return;
         }
@@ -1118,6 +1121,8 @@ public class DataTree {
                 children = childs.toArray(new String[childs.size()]);
             }
         }
+        System.out.println("DIMAS: " + System.getPathCondition());
+        System.endConcolic();
         path.append('/');
         int off = path.length();
         if (children != null) {

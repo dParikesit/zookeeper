@@ -1,0 +1,462 @@
+2025-01-09 16:18:25,731 [myid:] - INFO  [main:QuorumPeerConfig@103] - Reading configuration from: /localtmp/concolic/zookeeper/bin/../conf/zoo.cfg
+2025-01-09 16:18:25,737 [myid:] - INFO  [main:DatadirCleanupManager@78] - autopurge.snapRetainCount set to 3
+2025-01-09 16:18:25,738 [myid:] - INFO  [main:DatadirCleanupManager@79] - autopurge.purgeInterval set to 0
+2025-01-09 16:18:25,738 [myid:] - INFO  [main:DatadirCleanupManager@101] - Purge task is not scheduled.
+2025-01-09 16:18:25,739 [myid:] - WARN  [main:QuorumPeerMain@113] - Either no config or no quorum defined in config, running  in standalone mode
+2025-01-09 16:18:25,759 [myid:] - INFO  [main:QuorumPeerConfig@103] - Reading configuration from: /localtmp/concolic/zookeeper/bin/../conf/zoo.cfg
+2025-01-09 16:18:25,760 [myid:] - INFO  [main:ZooKeeperServerMain@95] - Starting server
+2025-01-09 16:18:25,770 [myid:] - INFO  [main:Environment@100] - Server environment:zookeeper.version=3.4.6--1, built on 01/09/2025 20:08 GMT
+2025-01-09 16:18:25,770 [myid:] - INFO  [main:Environment@100] - Server environment:host.name=lift11
+2025-01-09 16:18:25,771 [myid:] - INFO  [main:Environment@100] - Server environment:java.version=1.8.0-internal
+2025-01-09 16:18:25,771 [myid:] - INFO  [main:Environment@100] - Server environment:java.vendor=Oracle Corporation
+2025-01-09 16:18:25,771 [myid:] - INFO  [main:Environment@100] - Server environment:java.home=/localtmp/concolic/webridge/build/linux-x86_64-normal-zero-release/images/j2sdk-image/jre
+2025-01-09 16:18:25,771 [myid:] - INFO  [main:Environment@100] - Server environment:java.class.path=/localtmp/concolic/zookeeper/bin/../build/classes:/localtmp/concolic/zookeeper/bin/../build/lib/slf4j-log4j12-1.6.1.jar:/localtmp/concolic/zookeeper/bin/../build/lib/slf4j-api-1.6.1.jar:/localtmp/concolic/zookeeper/bin/../build/lib/netty-3.7.0.Final.jar:/localtmp/concolic/zookeeper/bin/../build/lib/log4j-1.2.16.jar:/localtmp/concolic/zookeeper/bin/../build/lib/jline-0.9.94.jar:/localtmp/concolic/zookeeper/bin/../lib/*.jar:/localtmp/concolic/zookeeper/bin/../zookeeper-*.jar:/localtmp/concolic/zookeeper/bin/../src/java/lib/ivy-2.2.0.jar:/localtmp/concolic/zookeeper/bin/../conf:
+2025-01-09 16:18:25,771 [myid:] - INFO  [main:Environment@100] - Server environment:java.library.path=/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+2025-01-09 16:18:25,772 [myid:] - INFO  [main:Environment@100] - Server environment:java.io.tmpdir=/tmp
+2025-01-09 16:18:25,772 [myid:] - INFO  [main:Environment@100] - Server environment:java.compiler=<NA>
+2025-01-09 16:18:25,776 [myid:] - INFO  [main:Environment@100] - Server environment:os.name=Linux
+2025-01-09 16:18:25,776 [myid:] - INFO  [main:Environment@100] - Server environment:os.arch=amd64
+2025-01-09 16:18:25,776 [myid:] - INFO  [main:Environment@100] - Server environment:os.version=5.15.0-119-generic
+2025-01-09 16:18:25,777 [myid:] - INFO  [main:Environment@100] - Server environment:user.name=?
+2025-01-09 16:18:25,777 [myid:] - INFO  [main:Environment@100] - Server environment:user.home=?
+2025-01-09 16:18:25,777 [myid:] - INFO  [main:Environment@100] - Server environment:user.dir=/localtmp/concolic/zookeeper
+2025-01-09 16:18:25,793 [myid:] - INFO  [main:ZooKeeperServer@754] - tickTime set to 2000
+2025-01-09 16:18:25,793 [myid:] - INFO  [main:ZooKeeperServer@763] - minSessionTimeout set to -1
+2025-01-09 16:18:25,793 [myid:] - INFO  [main:ZooKeeperServer@772] - maxSessionTimeout set to -1
+2025-01-09 16:18:25,803 [myid:] - INFO  [main:NIOServerCnxnFactory@94] - binding to port 0.0.0.0/0.0.0.0:2181
+2025-01-09 16:18:34,226 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:32850
+2025-01-09 16:18:34,249 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@867] - Client attempting to establish new session at /127.0.0.1:32850
+2025-01-09 16:18:34,256 [myid:] - INFO  [SyncThread:0:FileTxnLog@199] - Creating new log file: log.1
+2025-01-09 16:18:34,273 [myid:] - INFO  [SyncThread:0:ZooKeeperServer@616] - Established session 0x1944ceecc1c0000 with negotiated timeout 30000 for client /127.0.0.1:32850
+2025-01-09 16:18:37,687 [myid:] - INFO  [Snapshot Thread:FileTxnSnapLog@240] - Snapshotting: 0x1 to /localtmp/concolic/zookeeper/data/version-2/snapshot.1
+Adding disable concolic handler for class com/fasterxml/jackson/core/json/UTF8JsonGenerator
+Adding disable concolic handler for class com/fasterxml/jackson/databind/ser/BeanPropertyWriter
+Adding disable concolic handler for class net/sf/jsqlparser/parser/CCJSqlParser
+Adding disable concolic handler for class freemarker/core/FMParserTokenManager
+Adding disable concolic handler for class org/apache/ibatis/ognl/OgnlParser
+Adding disable concolic handler for class org/apache/ibatis/ognl/Ognl
+Adding disable concolic handler for class org/attoparser/MarkupParser
+Adding disable concolic handler for class org/thymeleaf/TemplateEngine
+Adding disable concolic handler for class org/apache/http/impl/execchain/ProtocolExec
+Starting concolic execution
+added symbolic method: org/apache/jute/OutputArchive.writeString
+added symbolic method: org/apache/jute/BinaryOutputArchive.writeString
+DIMAS MONITOR: enter org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: enter org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/DataOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/DataOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: enter org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: exit org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: exit org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS: [{"_type":"BinaryExpression","_left":null,"_op":"enter","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"MethodExpression","_name":"org/apache/jute/BinaryOutputArchive writeString","_param_list":[{"_type":"SymbolExpression","_java_type":"org/apache/jute/BinaryOutputArchive","_exp":"M_L'org/apache/jute/BinaryOutputArchive'_1"},{"_type":"SymbolExpression","_java_type":"java/lang/String","_exp":"M_L'String'_2"},{"_type":"SymbolExpression","_java_type":"java/lang/String","_exp":"M_L'String'_3"}],"_res_exp":{"_type":"SymbolExpression","_java_type":"","_exp":"V"}},{"_type":"BinaryExpression","_left":null,"_op":"enter","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"BinaryExpression","_left":null,"_op":"exit","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"BinaryExpression","_left":null,"_op":"enter","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"BinaryExpression","_left":null,"_op":"exit","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"BinaryExpression","_left":null,"_op":"exit","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}}]DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/PrintStream
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/PrintStream
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/PrintStream
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/PrintStream
+DIMAS MONITOR: exit java/io/PrintStream
+Cleaning 190 dangling expressions
+Checking memory leaks for Expression, 0 remains...
+Adding disable concolic handler for class com/fasterxml/jackson/core/json/UTF8JsonGenerator
+Adding disable concolic handler for class com/fasterxml/jackson/databind/ser/BeanPropertyWriter
+Adding disable concolic handler for class net/sf/jsqlparser/parser/CCJSqlParser
+Adding disable concolic handler for class freemarker/core/FMParserTokenManager
+Adding disable concolic handler for class org/apache/ibatis/ognl/OgnlParser
+Adding disable concolic handler for class org/apache/ibatis/ognl/Ognl
+Adding disable concolic handler for class org/attoparser/MarkupParser
+Adding disable concolic handler for class org/thymeleaf/TemplateEngine
+Adding disable concolic handler for class org/apache/http/impl/execchain/ProtocolExec
+Starting concolic execution
+added symbolic method: org/apache/jute/OutputArchive.writeString
+added symbolic method: org/apache/jute/BinaryOutputArchive.writeString
+DIMAS MONITOR: enter org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: enter org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/DataOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/DataOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: enter org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: exit org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: exit org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS: [{"_type":"BinaryExpression","_left":null,"_op":"enter","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"MethodExpression","_name":"org/apache/jute/BinaryOutputArchive writeString","_param_list":[{"_type":"SymbolExpression","_java_type":"org/apache/jute/BinaryOutputArchive","_exp":"M_L'org/apache/jute/BinaryOutputArchive'_1"},{"_type":"SymbolExpression","_java_type":"java/lang/String","_exp":"M_L'String'_2"},{"_type":"SymbolExpression","_java_type":"java/lang/String","_exp":"M_L'String'_3"}],"_res_exp":{"_type":"SymbolExpression","_java_type":"","_exp":"V"}},{"_type":"BinaryExpression","_left":null,"_op":"enter","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"BinaryExpression","_left":null,"_op":"exit","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"BinaryExpression","_left":null,"_op":"enter","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"BinaryExpression","_left":null,"_op":"exit","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"BinaryExpression","_left":null,"_op":"exit","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}}]DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/PrintStream
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/PrintStream
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/PrintStream
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/PrintStream
+DIMAS MONITOR: exit java/io/PrintStream
+Cleaning 190 dangling expressions
+Checking memory leaks for Expression, 0 remains...
+Adding disable concolic handler for class com/fasterxml/jackson/core/json/UTF8JsonGenerator
+Adding disable concolic handler for class com/fasterxml/jackson/databind/ser/BeanPropertyWriter
+Adding disable concolic handler for class net/sf/jsqlparser/parser/CCJSqlParser
+Adding disable concolic handler for class freemarker/core/FMParserTokenManager
+Adding disable concolic handler for class org/apache/ibatis/ognl/OgnlParser
+Adding disable concolic handler for class org/apache/ibatis/ognl/Ognl
+Adding disable concolic handler for class org/attoparser/MarkupParser
+Adding disable concolic handler for class org/thymeleaf/TemplateEngine
+Adding disable concolic handler for class org/apache/http/impl/execchain/ProtocolExec
+Starting concolic execution
+added symbolic method: org/apache/jute/OutputArchive.writeString
+added symbolic method: org/apache/jute/BinaryOutputArchive.writeString
+DIMAS MONITOR: enter org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: enter org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/DataOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/DataOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: enter org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: exit org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: exit org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS: [{"_type":"BinaryExpression","_left":null,"_op":"enter","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"MethodExpression","_name":"org/apache/jute/BinaryOutputArchive writeString","_param_list":[{"_type":"SymbolExpression","_java_type":"org/apache/jute/BinaryOutputArchive","_exp":"M_L'org/apache/jute/BinaryOutputArchive'_1"},{"_type":"SymbolExpression","_java_type":"java/lang/String","_exp":"M_L'String'_2"},{"_type":"SymbolExpression","_java_type":"java/lang/String","_exp":"M_L'String'_3"}],"_res_exp":{"_type":"SymbolExpression","_java_type":"","_exp":"V"}},{"_type":"BinaryExpression","_left":null,"_op":"enter","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"BinaryExpression","_left":null,"_op":"exit","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"BinaryExpression","_left":null,"_op":"enter","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"BinaryExpression","_left":null,"_op":"exit","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"BinaryExpression","_left":null,"_op":"exit","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}}]DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/PrintStream
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/PrintStream
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/PrintStream
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/PrintStream
+DIMAS MONITOR: exit java/io/PrintStream
+Cleaning 190 dangling expressions
+Checking memory leaks for Expression, 0 remains...
+Adding disable concolic handler for class com/fasterxml/jackson/core/json/UTF8JsonGenerator
+Adding disable concolic handler for class com/fasterxml/jackson/databind/ser/BeanPropertyWriter
+Adding disable concolic handler for class net/sf/jsqlparser/parser/CCJSqlParser
+Adding disable concolic handler for class freemarker/core/FMParserTokenManager
+Adding disable concolic handler for class org/apache/ibatis/ognl/OgnlParser
+Adding disable concolic handler for class org/apache/ibatis/ognl/Ognl
+Adding disable concolic handler for class org/attoparser/MarkupParser
+Adding disable concolic handler for class org/thymeleaf/TemplateEngine
+Adding disable concolic handler for class org/apache/http/impl/execchain/ProtocolExec
+Starting concolic execution
+added symbolic method: org/apache/jute/OutputArchive.writeString
+added symbolic method: org/apache/jute/BinaryOutputArchive.writeString
+DIMAS MONITOR: enter org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: enter org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/DataOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/DataOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: enter org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: exit org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: exit org/apache/zookeeper/server/DataNode
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS: [{"_type":"BinaryExpression","_left":null,"_op":"enter","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"MethodExpression","_name":"org/apache/jute/BinaryOutputArchive writeString","_param_list":[{"_type":"SymbolExpression","_java_type":"org/apache/jute/BinaryOutputArchive","_exp":"M_L'org/apache/jute/BinaryOutputArchive'_1"},{"_type":"SymbolExpression","_java_type":"java/lang/String","_exp":"M_L'String'_2"},{"_type":"SymbolExpression","_java_type":"java/lang/String","_exp":"M_L'String'_3"}],"_res_exp":{"_type":"SymbolExpression","_java_type":"","_exp":"V"}},{"_type":"BinaryExpression","_left":null,"_op":"enter","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"BinaryExpression","_left":null,"_op":"exit","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"BinaryExpression","_left":null,"_op":"enter","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"BinaryExpression","_left":null,"_op":"exit","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}},{"_type":"BinaryExpression","_left":null,"_op":"exit","_right":{"_type":"SymbolExpression","_java_type":"org/apache/zookeeper/server/DataNode","_exp":"M_L'org/apache/zookeeper/server/DataNode'_0"}}]DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/PrintStream
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/PrintStream
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/PrintStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/PrintStream
+DIMAS MONITOR: exit java/io/OutputStreamWriter
+DIMAS MONITOR: enter java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/BufferedOutputStream
+DIMAS MONITOR: exit java/io/PrintStream
+DIMAS MONITOR: exit java/io/PrintStream
+Cleaning 190 dangling expressions
+Checking memory leaks for Expression, 0 remains...
+2025-01-09 16:18:40,420 [myid:] - INFO  [ProcessThread(sid:0 cport:-1)::PrepRequestProcessor@494] - Processed session termination for sessionid: 0x1944ceecc1c0000
+2025-01-09 16:18:40,421 [myid:] - INFO  [SyncThread:0:FileTxnLog@199] - Creating new log file: log.3
+2025-01-09 16:18:40,427 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1007] - Closed socket connection for client /127.0.0.1:32850 which had sessionid 0x1944ceecc1c0000
