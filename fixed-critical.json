@@ -1,0 +1,88 @@
+[
+    {
+        "_type": "BinaryExpression",
+        "_left": null,
+        "_op": "enter",
+        "_right": {
+            "_type": "SymbolExpression",
+            "_java_type": "org/apache/zookeeper/server/DataNode",
+            "_exp": "M_L'org/apache/zookeeper/server/DataNode'_0"
+        }
+    },
+    {
+        "_type": "BinaryExpression",
+        "_left": null,
+        "_op": "enter",
+        "_right": {
+            "_type": "SymbolExpression",
+            "_java_type": "org/apache/zookeeper/server/DataNode",
+            "_exp": "M_L'org/apache/zookeeper/server/DataNode'_0"
+        }
+    },
+    {
+        "_type": "BinaryExpression",
+        "_left": null,
+        "_op": "exit",
+        "_right": {
+            "_type": "SymbolExpression",
+            "_java_type": "org/apache/zookeeper/server/DataNode",
+            "_exp": "M_L'org/apache/zookeeper/server/DataNode'_0"
+        }
+    },
+    {
+        "_type": "BinaryExpression",
+        "_left": null,
+        "_op": "exit",
+        "_right": {
+            "_type": "SymbolExpression",
+            "_java_type": "org/apache/zookeeper/server/DataNode",
+            "_exp": "M_L'org/apache/zookeeper/server/DataNode'_0"
+        }
+    },
+    {
+        "_type": "MethodExpression",
+        "_name": "org/apache/jute/BinaryOutputArchive writeString",
+        "_param_list": [
+            {
+                "_type": "SymbolExpression",
+                "_java_type": "org/apache/jute/BinaryOutputArchive",
+                "_exp": "M_L'org/apache/jute/BinaryOutputArchive'_1"
+            },
+            {
+                "_type": "SymbolExpression",
+                "_java_type": "java/lang/String",
+                "_exp": "M_L'String'_2"
+            },
+            {
+                "_type": "SymbolExpression",
+                "_java_type": "java/lang/String",
+                "_exp": "M_L'String'_3"
+            }
+        ],
+        "_res_exp": {
+            "_type": "SymbolExpression",
+            "_java_type": "",
+            "_exp": "V"
+        }
+    },
+    {
+        "_type": "BinaryExpression",
+        "_left": null,
+        "_op": "enter",
+        "_right": {
+            "_type": "SymbolExpression",
+            "_java_type": "org/apache/zookeeper/server/DataNode",
+            "_exp": "M_L'org/apache/zookeeper/server/DataNode'_0"
+        }
+    },
+    {
+        "_type": "BinaryExpression",
+        "_left": null,
+        "_op": "exit",
+        "_right": {
+            "_type": "SymbolExpression",
+            "_java_type": "org/apache/zookeeper/server/DataNode",
+            "_exp": "M_L'org/apache/zookeeper/server/DataNode'_0"
+        }
+    }
+]
