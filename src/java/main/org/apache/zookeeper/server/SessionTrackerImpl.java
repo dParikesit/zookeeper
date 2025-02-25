@@ -21,12 +21,15 @@ package org.apache.zookeeper.server;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.WebridgeHashMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.WebridgeConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,7 +153,10 @@ public class SessionTrackerImpl extends Thread implements SessionTracker {
                 set = sessionSets.remove(nextExpirationTime);
                 if (set != null) {
                     for (SessionImpl s : set.sessions) {
+                        // System.startConcolic();
                         sessionsById.remove(s.sessionId);
+                        // System.out.println(System.getPathCondition());
+                        // System.endConcolic();
                         expirer.expire(s);
                     }
                 }
@@ -170,6 +176,10 @@ public class SessionTrackerImpl extends Thread implements SessionTracker {
                     + Long.toHexString(sessionId) + " with timeout " + timeout);
         }
         SessionImpl s = sessionsById.get(sessionId);
+        if (Thread.currentThread().getName().contains("SyncThread")) {
+            //System.out.println(System.getPathCondition());
+            //System.endConcolic();
+        }
         if (s == null) {
             return false;
         }
@@ -197,9 +207,17 @@ public class SessionTrackerImpl extends Thread implements SessionTracker {
             LOG.info("Session closing: 0x" + Long.toHexString(sessionId));
         }
         SessionImpl s = sessionsById.get(sessionId);
+        System.out.println("DIMAS: setSessionClosing");
+        System.startConcolic();
+        System.symbolize(s, "org.apache.zookeeper.server.SessionTrackerImpl.SessionImpl");
         if (s == null) {
+            System.out.println("DIMAS: NULL");
+            System.out.println(System.getPathCondition());
+            System.endConcolic();
             return;
         }
+        System.out.println(System.getPathCondition());
+        System.endConcolic();
         s.isClosing = true;
     }
 
@@ -233,8 +251,19 @@ public class SessionTrackerImpl extends Thread implements SessionTracker {
     }
 
     synchronized public void addSession(long id, int sessionTimeout) {
+        // if(Thread.currentThread().getName().contains("SyncThread")){
+        //     System.out.println(Arrays.toString(Thread.currentThread().getStackTrace()).replace(',', '\n'));
+        //     System.out.println(Thread.currentThread().getName());
+        //     // System.startConcolic();
+        // }
         sessionsWithTimeout.put(id, sessionTimeout);
         if (sessionsById.get(id) == null) {
+            // if (Thread.currentThread().getName().contains("SyncThread")) {
+            //     System.out.println("DIMAS: empty sessionsById");
+            //     // System.out.println(System.getPathCondition());
+            //     // System.endConcolic();
+            // }
+            
             SessionImpl s = new SessionImpl(id, sessionTimeout, 0);
             sessionsById.put(id, s);
             if (LOG.isTraceEnabled()) {
@@ -243,6 +272,11 @@ public class SessionTrackerImpl extends Thread implements SessionTracker {
                         + Long.toHexString(id) + " " + sessionTimeout);
             }
         } else {
+            // if (Thread.currentThread().getName().contains("SyncThread")) {
+            //     System.out.println("DIMAS: NOT empty sessionsById");
+            //     // System.out.println(System.getPathCondition());
+            //     // System.endConcolic();
+            // }
             if (LOG.isTraceEnabled()) {
                 ZooTrace.logTraceMessage(LOG, ZooTrace.SESSION_TRACE_MASK,
                         "SessionTrackerImpl --- Existing session 0x"
@@ -254,9 +288,15 @@ public class SessionTrackerImpl extends Thread implements SessionTracker {
 
     synchronized public void checkSession(long sessionId, Object owner) throws KeeperException.SessionExpiredException, KeeperException.SessionMovedException {
         SessionImpl session = sessionsById.get(sessionId);
+        System.startConcolic();
+        System.symbolize(session, "org.apache.zookeeper.server.SessionTrackerImpl.SessionImpl");
         if (session == null || session.isClosing()) {
+            System.out.println(System.getPathCondition());
+            System.endConcolic();
             throw new KeeperException.SessionExpiredException();
         }
+        System.out.println(System.getPathCondition());
+        System.endConcolic();
         if (session.owner == null) {
             session.owner = owner;
         } else if (session.owner != owner) {

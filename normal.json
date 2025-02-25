@@ -1,0 +1,46 @@
+[//setSessionClosing
+    {
+        "_type": "BinaryExpression",
+        "_left": {
+            "_type": "SymbolExpression",
+            "_java_type": "org/apache/zookeeper/server/SessionTrackerImpl$SessionImpl",
+            "_exp": "M_L'org/apache/zookeeper/server/SessionTrackerImpl$SessionImpl'_1"
+        },
+        "_op": "!=", // session not null, which means isClosing will be set to true
+        "_right": {
+            "_type": "ConStringSymbolExp",
+            "_java_type": "java/lang/String",
+            "_exp": "Y_L'String'_NULL"
+        }
+    }
+]
+[//checkSession
+    {
+        "_type": "BinaryExpression",
+        "_left": {
+            "_type": "SymbolExpression",
+            "_java_type": "org/apache/zookeeper/server/SessionTrackerImpl$SessionImpl",
+            "_exp": "M_L'org/apache/zookeeper/server/SessionTrackerImpl$SessionImpl'_1"
+        },
+        "_op": "!=",
+        "_right": {
+            "_type": "ConStringSymbolExp",
+            "_java_type": "java/lang/String",
+            "_exp": "Y_L'String'_NULL"
+        }
+    },
+    {
+        "_type": "BinaryExpression",
+        "_left": {
+            "_type": "SymbolExpression",
+            "_java_type": "Z",
+            "_exp": "M_Z_field_org.apache.zookeeper.server.SessionTrackerImpl.SessionImpl_org_apache_zookeeper_server_SessionTrackerImpl__SessionImpl_isClosing"
+        },
+        "_op": "!=", // isClosing true, which cause checkSession to fail
+        "_right": {
+            "_type": "ConstExpr",
+            "_java_type": "I",
+            "_exp": "Y_I_0"
+        }
+    }
+]

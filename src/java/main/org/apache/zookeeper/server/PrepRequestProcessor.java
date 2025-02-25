@@ -298,6 +298,7 @@ public class PrepRequestProcessor extends Thread implements RequestProcessor {
 
         switch (type) {
             case OpCode.create:                
+                System.out.println("DIMAS: checkSession");
                 zks.sessionTracker.checkSession(request.sessionId, request.getOwner());
                 CreateRequest createRequest = (CreateRequest)record;   
                 if(deserialize)
